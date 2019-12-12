@@ -6,7 +6,6 @@ import {Navigation} from "../Navigation/Navigation";
 import {BrowseVehicles} from "../BrowseVehicles/BrowseVehicles";
 import {Route, Switch} from 'react-router-dom';
 import {AddVehicle} from "../AddVehicle/AddVehicle";
-import {firebase} from "../../Firebase/Firebase";
 import {AppProvider} from "../../AppContext/AppContext";
 import {EditVehicle} from "../EditVehicle/EditVehicle";
 import {AddBooking} from "../AddBooking/AddBooking";
@@ -391,7 +390,51 @@ export class App extends React.Component {
    * odometers, if need be
    */
   componentDidMount() {
-	this
+	this.setState({
+	  loading: true
+	}, () => {
+	  fetch(`/api/vehicles`)
+		.then(data => data.json())
+		.then(vehicles => {
+		  this.setState({
+			vehicles: vehicles.map(v => {
+			  const vehicleBookings = v.bookings.map(b => new Booking(b.vehicleUuid, b.type, b.startedAt, b.endedAt, b.startOdometer, null, [], [], b.uuid, b.createdAt, b.updatedAt));
+
+			  const vehicleJourneys = v.journeys.map(j => new Journey(j.bookingUuid, j.startOdometer, j.endOdometer, j.startedAt, j.endedAt, j.journeyFrom, j.journeyTo, j.uuid, j.createdAt, j.updatedAt));
+
+			  vehicleBookings.forEach(b => {
+				const associatedJourneys = vehicleJourneys.filter(j => j.bookingID === b.id);
+
+				associatedJourneys.forEach(j => {
+				  b.addJourney(j);
+				})
+			  });
+
+			  const vehicleFuelPurchases = v.fuelPurchases.map(f => new FuelPurchase(f.bookingUuid, f.fuelQuantity, f.fuelPrice, f.uuid, f.createdAt, f.updatedAt));
+
+			  vehicleBookings.forEach(b => {
+				const associatedFuelPurchases = vehicleFuelPurchases.filter(f => f.bookingID === b.id);
+
+				associatedFuelPurchases.forEach(f => {
+				  b.addFuelPurchase(f);
+				})
+			  });
+
+			  const vehicleServices = v.services.map(s => new Service(s.vehicleUuid, s.odometer, s.servicedAt, s.uuid, s.createdAt, s.updatedAt));
+
+			  return new Vehicle(v.manufacturer, v.model, v.year, v.odometer, v.registration, v.tankSize, vehicleBookings, vehicleJourneys, vehicleFuelPurchases, vehicleServices, v.uuid, v.createdAt, v.updatedAt)
+			})
+		  }, () => {
+		    this.setState({
+			  revenue: calculateTotalRevenue(this.state.vehicles),
+			  loading: false
+			})
+		  })
+		})
+		.catch(console.error);
+	})
+
+	/*this
 	  .fetchCollections('vehicles', 'bookings', 'journeys', 'services', 'fuelPurchases')
 	  .then(values => {
 		// move services, bookings, journeys and fuel purchases to the respective vehicle
@@ -454,7 +497,7 @@ export class App extends React.Component {
 			message: `Error: ${err.message}`
 		  }
 		}, this.dismissNotification)
-	  })
+	  })*/
   }
 
   /**

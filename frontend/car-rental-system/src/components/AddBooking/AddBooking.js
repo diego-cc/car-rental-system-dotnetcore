@@ -70,7 +70,7 @@ export const AddBooking = () => {
 	  addResource('booking', bookingToBeAdded);
 	  history.push(`/show/${vehicle.id}`);
 	}
-  }, [addBooking]);
+  }, [addBooking, addResource, bookingToBeAdded, history, vehicle.id]);
 
   return (
 	<Container>

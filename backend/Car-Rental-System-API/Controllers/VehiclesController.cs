@@ -24,42 +24,13 @@ namespace Car_Rental_System_API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Vehicle>>> GetVehicles()
         {
-            var vehicles = await _context.Vehicles.ToListAsync();
-            var bookings = await _context.Bookings.ToListAsync();
-            var journeys = await _context.Journeys.ToListAsync();
-            var fuelPurchases = await _context.FuelPurchases.ToListAsync();
-            var services = await _context.Services.ToListAsync();
-
-            var mappedVehicles = vehicles.Select(v =>
-            {
-                // map bookings associated with this vehicle
-                var correspondingBookings = bookings.FindAll(b =>
-                (b.VehicleId == v.Id) && (b.VehicleUuid == v.Uuid));
-                v.Bookings = correspondingBookings;
-
-                // map journeys associated with this vehicle
-                var correspondingJourneys = journeys.FindAll(j =>
-                (j.VehicleId == v.Id) && (j.VehicleUuid == v.Uuid));
-                v.Journeys = correspondingJourneys;
-
-                // map fuelPurchases associated with this vehicle
-                var correspondingFuelPurchases = fuelPurchases.FindAll(f =>
-                (f.VehicleId == v.Id) && (f.VehicleUuid == v.Uuid));
-                v.FuelPurchases = correspondingFuelPurchases;
-
-                // map services associated with this vehicle
-                var correspondingServices = services.FindAll(s =>
-                (s.VehicleId == v.Id) && (s.VehicleUuid == v.Uuid));
-                v.Services = correspondingServices;
-
-                return v;
-            });
+            var mappedVehicles = await MapPropertiesToVehicles();
             return Ok(mappedVehicles);
         }
 
         // GET: api/Vehicles/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Vehicle>> GetVehicle(ulong id)
+        [HttpGet("{id:long}")]
+        public async Task<ActionResult<Vehicle>> GetVehicleById(ulong id)
         {
             var vehicle = await _context.Vehicles.FindAsync(id);
 
@@ -67,8 +38,28 @@ namespace Car_Rental_System_API.Controllers
             {
                 return NotFound();
             }
+            else
+            {
+                var mappedVehicle = await MapPropertiesToVehicle(vehicle);
+                return Ok(mappedVehicle);
+            }
+        }
 
-            return vehicle;
+        // GET: api/Vehicles/65680537-130d-4469-83cb-5c407721f736
+        [HttpGet("{uuid:guid}")]
+        public async Task<ActionResult<Vehicle>> GetVehicleByUuid(Guid uuid)
+        {
+            var vehicle = await _context.Vehicles.SingleOrDefaultAsync(v => v.Uuid == uuid);
+
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                var mappedVehicle = await MapPropertiesToVehicle(vehicle);
+                return Ok(vehicle);
+            }
         }
 
         // PUT: api/Vehicles/5
@@ -134,6 +125,73 @@ namespace Car_Rental_System_API.Controllers
         private bool VehicleExists(ulong id)
         {
             return _context.Vehicles.Any(e => e.Id == id);
+        }
+
+        private async Task<Vehicle> MapPropertiesToVehicle(Vehicle vehicle)
+        {
+            // map bookings, journeys, fuel purchases and services to this vehicle
+            var bookings = await _context.Bookings.Where(
+                b => b.VehicleId == vehicle.Id
+                )
+                .ToListAsync();
+
+            var journeys = await _context.Journeys.Where(
+                j => j.VehicleId == vehicle.Id
+                )
+                .ToListAsync();
+
+            var fuelPurchases = await _context.FuelPurchases.Where(
+                f => f.VehicleId == vehicle.Id
+                )
+                .ToListAsync();
+
+            var services = await _context.Services.Where(
+                s => s.VehicleId == vehicle.Id
+                )
+                .ToListAsync();
+
+            vehicle.Bookings = bookings;
+            vehicle.Journeys = journeys;
+            vehicle.FuelPurchases = fuelPurchases;
+            vehicle.Services = services;
+
+            return vehicle;
+        }
+
+        public async Task<IEnumerable<Vehicle>> MapPropertiesToVehicles()
+        {
+            var vehicles = await _context.Vehicles.ToListAsync();
+            var bookings = await _context.Bookings.ToListAsync();
+            var journeys = await _context.Journeys.ToListAsync();
+            var fuelPurchases = await _context.FuelPurchases.ToListAsync();
+            var services = await _context.Services.ToListAsync();
+
+            var mappedVehicles = vehicles.Select(v =>
+            {
+                // map bookings associated with this vehicle
+                var correspondingBookings = bookings.FindAll(b =>
+                (b.VehicleId == v.Id) && (b.VehicleUuid == v.Uuid));
+                v.Bookings = correspondingBookings;
+
+                // map journeys associated with this vehicle
+                var correspondingJourneys = journeys.FindAll(j =>
+                (j.VehicleId == v.Id) && (j.VehicleUuid == v.Uuid));
+                v.Journeys = correspondingJourneys;
+
+                // map fuelPurchases associated with this vehicle
+                var correspondingFuelPurchases = fuelPurchases.FindAll(f =>
+                (f.VehicleId == v.Id) && (f.VehicleUuid == v.Uuid));
+                v.FuelPurchases = correspondingFuelPurchases;
+
+                // map services associated with this vehicle
+                var correspondingServices = services.FindAll(s =>
+                (s.VehicleId == v.Id) && (s.VehicleUuid == v.Uuid));
+                v.Services = correspondingServices;
+
+                return v;
+            });
+
+            return mappedVehicles;
         }
     }
 }

@@ -2,7 +2,6 @@
  * Booking.js
  */
 import moment from "moment";
-import {firebase} from "../Firebase/Firebase";
 
 /**
  * Booking model class
@@ -12,8 +11,8 @@ export class Booking {
   _id;
   _vehicleID;
   _bookingType;
-  _journeys = [];
-  _fuelPurchases = [];
+  _journeys;
+  _fuelPurchases;
   _bookingCost;
   _startDate;
   _endDate;
@@ -30,11 +29,13 @@ export class Booking {
    * @param {Date|string} endDate - booking end date in the format YYYY-MM-DD
    * @param {number} startOdometer - initial odometer reading of the vehicle
    * @param {number|null} endOdometer - final odometer reading of the vehicle
+   * @param {Array<Journey>} journeys - journeys associated with this booking
+   * @param {Array<FuelPurchase>} fuelPurchases - fuel purchases associated with this booking
    * @param {number} id - ID of this booking
    * @param {string} createdAt - timestamp generated when this booking is created
    * @param {string|null} updatedAt - timestamp generated when this booking is updated
    */
-  constructor(vehicleID, bookingType, startDate, endDate, startOdometer, endOdometer = null, id = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
+  constructor(vehicleID, bookingType, startDate, endDate, startOdometer, endOdometer = null, journeys = [], fuelPurchases = [], id = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
 	this._id = id;
 	this._vehicleID = vehicleID;
 	this._bookingType = bookingType;
@@ -42,6 +43,8 @@ export class Booking {
 	this._endDate = endDate;
 	this._startOdometer = startOdometer;
 	this._endOdometer = endOdometer;
+	this._journeys = journeys;
+	this._fuelPurchases = fuelPurchases;
 	this._createdAt = createdAt;
 	this._updatedAt = updatedAt;
 	this._bookingCost = this.calculateBookingCost();
@@ -162,19 +165,6 @@ export class Booking {
 	  this.endOdometer = lastJourney.journeyEndOdometerReading;
 	} else {
 	  this.endOdometer = null;
-	}
-	if (updateRemote) {
-	  // update endOdometer on firebase
-	  const db = firebase.firestore();
-	  db
-		.collection('bookings')
-		.doc(this.id)
-		.update({
-		  '_endOdometer': this.endOdometer,
-		  '_updatedAt': moment().format('DD/MM/YYYY hh:mm:ss a')
-		})
-		.then(callback)
-		.catch(err => console.dir(err))
 	}
   }
 

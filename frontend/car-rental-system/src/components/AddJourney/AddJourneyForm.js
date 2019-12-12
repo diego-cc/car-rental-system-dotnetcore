@@ -69,7 +69,7 @@ export const AddJourneyForm = () => {
 	  addResource('journey', journeyToBeAdded);
 	  history.push(`/show/${vehicle.id}`);
 	}
-  }, [addJourney]);
+  }, [addJourney, addResource, history, journeyToBeAdded, vehicle.id]);
 
   return (
 	<Container>

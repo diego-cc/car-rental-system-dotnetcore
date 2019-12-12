@@ -30,7 +30,7 @@ export const SearchVehicle = () => {
     if (selected.length) {
       history.push(`/show/${selected[0].id}`);
     }
-  }, [selected, typeaheadRef]);
+  }, [selected, typeaheadRef, history]);
 
   return (
     <AppConsumer>

@@ -1,8 +1,8 @@
 {
   "name": "car-rental-system",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
-  "proxy": "https://localhost:44369/",
+  "proxy": "https://localhost:5001/",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.25",
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
@@ -24,9 +24,9 @@
     "yup": "^0.27.0"
   },
   "scripts": {
-    "start": "yarn start-client",
+    "start": "concurrently \"yarn start-server\" \"yarn start-client\"",
     "start-client": "react-scripts start",
-    "start-server": "nodemon server/server.js",
+    "start-server": "cd ../../backend/Car-Rental-System-API/ && dotnet run && cd ../../frontend/car-rental-system/",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

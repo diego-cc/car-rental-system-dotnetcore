@@ -63,7 +63,7 @@ export const AddService = () => {
 	  addResource('service', serviceToBeAdded);
 	  history.push(`/show/${vehicle.id}`);
 	}
-  }, [addService]);
+  }, [addService, addResource, history, serviceToBeAdded, vehicle.id]);
 
   return (
 	<Container>

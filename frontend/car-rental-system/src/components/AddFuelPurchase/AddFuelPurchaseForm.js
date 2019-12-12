@@ -55,7 +55,7 @@ export const AddFuelPurchaseForm = () => {
 	  addResource('fuel purchase', fuelPurchaseToBeAdded);
 	  history.push(`/show/${vehicle.id}`);
 	}
-  }, [addFuelPurchase]);
+  }, [addFuelPurchase, addResource, fuelPurchaseToBeAdded, history, vehicle.id]);
 
   return (
 	<Container>

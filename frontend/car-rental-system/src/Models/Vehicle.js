@@ -3,7 +3,6 @@
  */
 import moment from "moment";
 import {Service} from "./Service";
-import {firebase} from "../Firebase/Firebase";
 
 /**
  * Vehicle model class
@@ -18,8 +17,10 @@ export class Vehicle {
   _registrationNumber;
   _tankCapacity;
   _fuelEconomy;
-  _bookings = [];
-  _services = [];
+  _bookings;
+  _journeys;
+  _fuelPurchases;
+  _services;
   _createdAt;
   _updatedAt;
 
@@ -32,11 +33,15 @@ export class Vehicle {
    * @param {number} odometerReading - odometer reading of this vehicle
    * @param {string} registrationNumber - registration number of this vehicle
    * @param {number} tankCapacity - tank capacity of this vehicle
+   * @param {Array<Booking>} bookings - bookings associated with this vehicle
+   * @param {Array<Journey>} journeys - journeys associated with this vehicle
+   * @param {Array<FuelPurchase>} fuelPurchases - fuel purchases associated with this vehicle
+   * @param {Array<Service>} services - services associated with this vehicle
    * @param {string} id - ID of this vehicle
    * @param {string} createdAt - timestamp generated when this vehicle is created
    * @param {string|null} updatedAt - timestamp generated when this vehicle is updated
    */
-  constructor(manufacturer, model, year, odometerReading, registrationNumber, tankCapacity, id = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
+  constructor(manufacturer, model, year, odometerReading, registrationNumber, tankCapacity, bookings = [], journeys = [], fuelPurchases = [], services = [], id = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
 	this._id = id;
 	this._manufacturer = manufacturer;
 	this._model = model;
@@ -44,6 +49,10 @@ export class Vehicle {
 	this._odometerReading = odometerReading;
 	this._registrationNumber = registrationNumber;
 	this._tankCapacity = tankCapacity;
+	this._bookings = bookings;
+	this._journeys = journeys;
+	this._fuelPurchases = fuelPurchases;
+	this._services = services;
 	this._fuelEconomy = this.calculateFuelEconomy();
 	this._createdAt = createdAt;
 	this._updatedAt = updatedAt;
@@ -138,12 +147,7 @@ export class Vehicle {
   }
 
   get journeys() {
-	return this._bookings.reduce((journeys, b) => {
-	  b.journeys.forEach(j => {
-		journeys.push(j);
-	  });
-	  return journeys;
-	}, []);
+	return this._journeys;
   }
 
   get services() {
@@ -329,20 +333,6 @@ export class Vehicle {
 
 		// update odometer reading for this vehicle
 		this.odometerReading = greatestEndOdometer ? greatestEndOdometer : this.odometerReading;
-
-		if (updateRemote) {
-		  // update vehicle on firebase
-		  const db = firebase.firestore();
-		  db
-			.collection('vehicles')
-			.doc(this.id)
-			.update({
-			  '_odometerReading': this.odometerReading,
-			  '_updatedAt': moment().format('DD/MM/YYYY hh:mm:ss a')
-			})
-			.then(callback)
-			.catch(console.dir)
-		}
 	  }
 	}
   }
