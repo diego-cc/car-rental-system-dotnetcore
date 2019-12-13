@@ -25,7 +25,7 @@
   "scripts": {
     "start": "concurrently \"yarn start-server\" \"yarn start-client\"",
     "start-client": "react-scripts start",
-    "start-server": "cd ../../backend/Car-Rental-System-API/ && dotnet build && dotnet run && cd ../../frontend/car-rental-system/",
+    "start-server": "cd ../../backend/Car-Rental-System-API/ && dotnet build && dotnet watch run && cd ../../frontend/car-rental-system/",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

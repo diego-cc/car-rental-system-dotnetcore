@@ -218,8 +218,9 @@ export class App extends React.Component {
 	  }, () => {
 		if (collectionName && collection) {
 		  if (updateRemote) {
-			// add resource to the mysql database
 			if (collectionName === 'fuelPurchases') collectionName = 'fuel_purchases';
+			console.log('Sending to remote:');
+			console.log(resource);
 			fetch(`/api/${collectionName}`, {
 			  method: 'POST',
 			  body: JSON.stringify(resource),
