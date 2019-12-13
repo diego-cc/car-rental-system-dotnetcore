@@ -15,8 +15,8 @@ namespace Car_Rental_System_API
             Services = new HashSet<Service>();
         }
 
-        [Required]
         public ulong Id { get; set; }
+        [Required]
         public Guid Uuid { get; set; }
         public string Manufacturer { get; set; }
         public string Model { get; set; }

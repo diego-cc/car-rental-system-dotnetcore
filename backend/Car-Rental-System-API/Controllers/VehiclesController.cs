@@ -65,7 +65,7 @@ namespace Car_Rental_System_API.Controllers
         // PUT: api/Vehicles/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
+        [HttpPut("{id:long}")]
         public async Task<IActionResult> PutVehicle(ulong id, Vehicle vehicle)
         {
             if (id != vehicle.Id)
@@ -94,20 +94,51 @@ namespace Car_Rental_System_API.Controllers
             return NoContent();
         }
 
+        // PUT: /api/Vehicles/65680537-130d-4469-83cb-5c407721f736
+        [HttpPut("{uuid:guid}")]
+        public async Task<IActionResult> PutVehicle(Guid uuid, Vehicle vehicle)
+        {
+            if (uuid != vehicle.Uuid)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(vehicle).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!VehicleExists(uuid))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
         // POST: api/Vehicles
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
         public async Task<ActionResult<Vehicle>> PostVehicle(Vehicle vehicle)
         {
-            _context.Vehicles.Add(vehicle);
-            await _context.SaveChangesAsync();
+            
+            //_context.Vehicles.Add(vehicle);
+            // await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetVehicle", new { id = vehicle.Id }, vehicle);
+            return CreatedAtAction(nameof(GetVehicleById), new { id = vehicle.Id }, vehicle);
         }
 
         // DELETE: api/Vehicles/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:long}")]
         public async Task<ActionResult<Vehicle>> DeleteVehicle(ulong id)
         {
             var vehicle = await _context.Vehicles.FindAsync(id);
@@ -122,9 +153,30 @@ namespace Car_Rental_System_API.Controllers
             return vehicle;
         }
 
+        // DELETE: api/Vehicles/65680537-130d-4469-83cb-5c407721f736
+        [HttpDelete("{uuid:guid}")]
+        public async Task<ActionResult<Vehicle>> DeleteVehicle(Guid uuid)
+        {
+            var vehicle = await _context.Vehicles.SingleOrDefaultAsync(v => v.Uuid == uuid);
+            if (vehicle == null)
+            {
+                return NotFound();
+            }
+
+            _context.Vehicles.Remove(vehicle);
+            await _context.SaveChangesAsync();
+
+            return vehicle;
+        }
+
         private bool VehicleExists(ulong id)
         {
             return _context.Vehicles.Any(e => e.Id == id);
+        }
+
+        private bool VehicleExists(Guid uuid)
+        {
+            return _context.Vehicles.Any(v => v.Uuid == uuid);
         }
 
         private async Task<Vehicle> MapPropertiesToVehicle(Vehicle vehicle)
