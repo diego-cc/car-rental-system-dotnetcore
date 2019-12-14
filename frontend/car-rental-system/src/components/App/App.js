@@ -57,7 +57,7 @@ export class App extends React.Component {
 	  }, () => {
 		this.setState(prevState => {
 		  const {vehicles} = {...prevState};
-		  const oldVehicleIndex = vehicles.findIndex(v => v.id === vehicle.uuid);
+		  const oldVehicleIndex = vehicles.findIndex(v => v.uuid === vehicle.uuid);
 		  const oldVehicle = vehicles[oldVehicleIndex];
 		  fieldsChanged = Object
 			.keys(oldVehicle)
@@ -177,8 +177,8 @@ export class App extends React.Component {
 		  switch (collectionName) {
 			case 'services':
 			case 'bookings':
-			  selectedVehicle = vehicles.find(v => v.id === resource.vehicleUuid);
-			  selectedVehicleIndex = vehicles.findIndex(v => v.id === resource.vehicleUuid);
+			  selectedVehicle = vehicles.find(v => v.uuid === resource.vehicleUuid);
+			  selectedVehicleIndex = vehicles.findIndex(v => v.uuid === resource.vehicleUuid);
 			  if (collectionName === 'services') {
 				selectedVehicle.addService(resource);
 			  } else {
@@ -188,8 +188,8 @@ export class App extends React.Component {
 
 			case 'journeys':
 			case 'fuelPurchases':
-			  selectedVehicle = vehicles.find(v => v.bookings.some(b => b.id === resource.bookingUuid));
-			  selectedVehicleIndex = vehicles.findIndex(v => v.bookings.some(b => b.id === resource.bookingUuid));
+			  selectedVehicle = vehicles.find(v => v.bookings.some(b => b.uuid === resource.bookingUuid));
+			  selectedVehicleIndex = vehicles.findIndex(v => v.bookings.some(b => b.uuid === resource.bookingUuid));
 			  if (collectionName === 'journeys') {
 				selectedVehicle.addJourney(resource);
 			  } else {
