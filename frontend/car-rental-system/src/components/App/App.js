@@ -22,6 +22,7 @@ import {Service} from "../../Models/Service";
 import {FuelPurchase} from "../../Models/FuelPurchase";
 import {Dashboard} from "../Dashboard/Dashboard";
 import {calculateTotalRevenue} from "./calculateTotalRevenue";
+import moment from "moment";
 
 /**
  * App component - entry point of this application
@@ -76,40 +77,37 @@ export class App extends React.Component {
 		  })
 		}, () => {
 		  if (updateRemote) {
+			let payload = {};
+
+			Object.keys({...vehicle}).forEach(k => {
+			  const propertyMatch = k.slice(1);
+			  if (!(propertyMatch === 'createdAt' || propertyMatch === 'updatedAt')) {
+				payload[propertyMatch] = vehicle[k];
+			  }
+			});
+			console.log('Payload: ', payload);
 			fetch(`/api/vehicles/${vehicle.uuid}`, {
 			  method: 'PUT',
 			  headers: {
 				'Content-Type': 'application/json'
 			  },
-			  body: JSON.stringify({...vehicle})
+			  body: JSON.stringify(payload)
 			})
-			  .then(res => res.json())
-			  .then(res => {
-				if (!res.error && !res.message) {
-				  this.setState({
-					loading: false,
-					notification: {
-					  display: true,
-					  message: 'The vehicle has been successfully updated'
-					}
-				  }, this.dismissNotification)
-				} else {
-				  this.setState({
-					loading: false,
-					notification: {
-					  display: true,
-					  message: res.error
-					}
-				  }, this.dismissNotification)
-				}
-			  })
-			  .catch(err => {
-				console.log(err);
+			  .then(() => {
 				this.setState({
 				  loading: false,
 				  notification: {
 					display: true,
-					message: err.message
+					message: 'The vehicle has been successfully updated'
+				  }
+				}, this.dismissNotification)
+			  })
+			  .catch(err => {
+				this.setState({
+				  loading: false,
+				  notification: {
+					display: true,
+					message: `Could not updated vehicle: ${err.message}`
 				  }
 				}, this.dismissNotification)
 			  })
@@ -218,12 +216,20 @@ export class App extends React.Component {
 	  }, () => {
 		if (collectionName && collection) {
 		  if (updateRemote) {
+			const payload = {};
+			Object.keys(resource).forEach(k => {
+			  if (resource.hasOwnProperty(k)) {
+				let matchProperty = k.slice(1);
+				if (!(matchProperty === 'createdAt' || matchProperty === 'updatedAt')) {
+				  payload[matchProperty] = resource[k];
+				}
+			  }
+			});
+			console.log('Sending to remote: ', payload);
 			if (collectionName === 'fuelPurchases') collectionName = 'fuel_purchases';
-			console.log('Sending to remote:');
-			console.log(resource);
 			fetch(`/api/${collectionName}`, {
 			  method: 'POST',
-			  body: JSON.stringify(resource),
+			  body: JSON.stringify(payload),
 			  headers: {
 				'Content-Type': 'application/json; charset=utf-8'
 			  }
@@ -426,7 +432,7 @@ export class App extends React.Component {
 			  return new Vehicle(v.manufacturer, v.model, v.year, v.odometer, v.registration, v.tankSize, vehicleBookings, vehicleJourneys, vehicleFuelPurchases, vehicleServices, v.uuid, v.createdAt, v.updatedAt);
 			})
 		  }, () => {
-		    this.setState({
+			this.setState({
 			  revenue: calculateTotalRevenue(this.state.vehicles),
 			  loading: false
 			})

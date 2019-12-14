@@ -27,14 +27,14 @@ const schema = yup.object().shape({
 		.get('year'),
 	  'Invalid year'
 	),
-  registrationNumber: yup
+  registration: yup
 	.string()
 	.trim()
 	.length(7, '7 characters are required')
 	.matches(/^[A-Za-z0-9]{7}$/, 'Only letters and numbers are valid')
 	.required('This field is required'),
-  odometerReading: yup.number().min(0, 'Invalid reading').required('This field is required'),
-  tankCapacity: yup.number().min(0, 'Invalid tank capacity')
+  odometer: yup.number().min(0, 'Invalid reading').required('This field is required'),
+  tankSize: yup.number().min(0, 'Invalid tank capacity')
 });
 
 /**
@@ -99,9 +99,9 @@ export const VehicleForm = props => {
 				manufacturer: vehicle ? vehicle.manufacturer : ``,
 				model: vehicle ? vehicle.model : ``,
 				year: vehicle ? vehicle.year : ``,
-				registrationNumber: vehicle ? vehicle.registrationNumber : ``,
-				odometerReading: vehicle ? vehicle.odometerReading : ``,
-				tankCapacity: vehicle ? vehicle.tankCapacity : ``
+				registration: vehicle ? vehicle.registration : ``,
+				odometer: vehicle ? vehicle.odometer : ``,
+				tankSize: vehicle ? vehicle.tankSize : ``
 			  }}
 			>
 			  {({
@@ -169,57 +169,57 @@ export const VehicleForm = props => {
 
 				  </Form.Row>
 				  <Form.Row className="mb-lg-3">
-					<Form.Group as={Col} controlId="registrationNumber" lg="6" md="12">
+					<Form.Group as={Col} controlId="registration" lg="6" md="12">
 					  <Form.Label>Registration Number:<span
 						className="text-danger">*</span></Form.Label>
 					  <Form.Control
 						onChange={handleChange}
-						name="registrationNumber"
-						value={values.registrationNumber}
+						name="registration"
+						value={values.registration}
 						type="text"
 						placeholder="Registration Number..."
-						isValid={touched.registrationNumber && !errors.registrationNumber}
-						isInvalid={!!errors.registrationNumber}
+						isValid={touched.registration && !errors.registration}
+						isInvalid={!!errors.registration}
 					  />
 					  <Form.Control.Feedback type="invalid">
-						{errors.registrationNumber}
+						{errors.registration}
 					  </Form.Control.Feedback>
 					</Form.Group>
 				  </Form.Row>
 
 				  <Form.Row className="mb-lg-3">
-					<Form.Group as={Col} controlId="odometerReading" lg="6" md="12">
+					<Form.Group as={Col} controlId="odometer" lg="6" md="12">
 					  <Form.Label>Odometer Reading (in kilometres):<span
 						className="text-danger">*</span></Form.Label>
 					  <Form.Control
 						onChange={handleChange}
-						name="odometerReading"
-						value={values.odometerReading}
+						name="odometer"
+						value={values.odometer}
 						type="number"
 						placeholder="Odometer Reading..."
-						isValid={touched.odometerReading && !errors.odometerReading}
-						isInvalid={!!errors.odometerReading}
+						isValid={touched.odometer && !errors.odometer}
+						isInvalid={!!errors.odometer}
 					  />
 					  <Form.Control.Feedback type="invalid">
-						{errors.odometerReading}
+						{errors.odometer}
 					  </Form.Control.Feedback>
 					</Form.Group>
 				  </Form.Row>
 
 				  <Form.Row className="mb-lg-5">
-					<Form.Group as={Col} controlId="tankCapacity" lg="6" md="12">
+					<Form.Group as={Col} controlId="tankSize" lg="6" md="12">
 					  <Form.Label>Tank Capacity (in litres):</Form.Label>
 					  <Form.Control
 						onChange={handleChange}
-						name="tankCapacity"
-						value={values.tankCapacity}
+						name="tankSize"
+						value={values.tankSize}
 						type="number"
 						placeholder="Tank Capacity..."
-						isValid={touched.tankCapacity && !errors.tankCapacity}
-						isInvalid={!!errors.tankCapacity}
+						isValid={touched.tankSize && !errors.tankSize}
+						isInvalid={!!errors.tankSize}
 					  />
 					  <Form.Control.Feedback type="invalid">
-						{errors.tankCapacity}
+						{errors.tankSize}
 					  </Form.Control.Feedback>
 					</Form.Group>
 				  </Form.Row>

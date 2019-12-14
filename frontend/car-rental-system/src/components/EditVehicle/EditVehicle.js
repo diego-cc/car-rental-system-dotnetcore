@@ -20,7 +20,7 @@ export const EditVehicle = () => {
   const history = useHistory();
   const {vehicleID} = useParams();
 
-  const vehicleToBeEdited = vehicles.find(v => v.id === vehicleID);
+  const vehicleToBeEdited = vehicles.find(v => v.uuid === vehicleID);
   let vehicle = cloneDeep(vehicleToBeEdited);
 
   return (
@@ -35,7 +35,7 @@ export const EditVehicle = () => {
 		}
 		vehicle.updatedAt = moment().format('DD/MM/YYYY hh:mm:ss A');
 		editVehicle(vehicle);
-		history.push(`/show/${vehicle.id}`);
+		history.push(`/show/${vehicle.uuid}`);
 	  }}
 	/>
   )

@@ -24,7 +24,7 @@ export const AddVehicle = () => {
 		const vehicleToBeAdded = new Vehicle(manufacturer, model, year, odometerReading, registrationNumber, tankCapacity);
 
 		addResource('vehicle', vehicleToBeAdded);
-		history.push(`/show/${vehicleToBeAdded.id}`);
+		history.push(`/show/${vehicleToBeAdded.uuid}`);
 	  }}/>
   )
 };

@@ -27,12 +27,12 @@ export const ShowVehicle = props => {
 	notification
   } = useContext(AppContext);
   let vehicle, vehicleBookings, vehicleJourneys, vehicleServices, vehicleFuelPurchases;
-  vehicle = vehicles.find(v => v.id === props.match.params.vehicleID);
+  vehicle = vehicles.find(v => v.uuid === props.match.params.vehicleID);
   if (vehicle) {
-	vehicleBookings = bookings.filter(b => b.vehicleID === vehicle.id);
-	vehicleJourneys = journeys.filter(j => vehicleBookings.some(b => b.id === j.bookingID));
-	vehicleServices = services.filter(s => s.vehicleID === vehicle.id);
-	vehicleFuelPurchases = fuelPurchases.filter(f => vehicleBookings.some(b => b.id === f.bookingID));
+	vehicleBookings = bookings.filter(b => b.vehicleID === vehicle.uuid);
+	vehicleJourneys = journeys.filter(j => vehicleBookings.some(b => b.uuid === j.bookingID));
+	vehicleServices = services.filter(s => s.vehicleID === vehicle.uuid);
+	vehicleFuelPurchases = fuelPurchases.filter(f => vehicleBookings.some(b => b.uuid === f.bookingID));
   }
 
   return (

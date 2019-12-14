@@ -96,14 +96,23 @@ namespace Car_Rental_System_API.Controllers
 
         // PUT: /api/Vehicles/65680537-130d-4469-83cb-5c407721f736
         [HttpPut("{uuid:guid}")]
-        public async Task<IActionResult> PutVehicle(Guid uuid, Vehicle vehicle)
+        public async Task<IActionResult> PutVehicle(Guid uuid, [FromBody]Vehicle vehicle)
         {
-            if (uuid != vehicle.Uuid)
+            var vehicleToBeModified = await _context.Vehicles.SingleOrDefaultAsync(v => v.Uuid == uuid);
+
+            if (vehicleToBeModified == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(vehicle).State = EntityState.Modified;
+            vehicleToBeModified.Manufacturer = vehicle.Manufacturer;
+            vehicleToBeModified.Model = vehicle.Model;
+            vehicleToBeModified.Year = vehicle.Year;
+            vehicleToBeModified.Odometer = vehicle.Odometer;
+            vehicleToBeModified.Registration = vehicle.Registration;
+            vehicleToBeModified.TankSize = vehicle.TankSize;
+
+            _context.Entry(vehicleToBeModified).State = EntityState.Modified;
 
             try
             {
@@ -134,7 +143,7 @@ namespace Car_Rental_System_API.Controllers
             _context.Vehicles.Add(vehicle);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetVehicleById), new { id = vehicle.Id }, vehicle);
+            return CreatedAtAction(nameof(GetVehicleByUuid), new { uuid = vehicle.Uuid }, vehicle);
         }
 
         // DELETE: api/Vehicles/5

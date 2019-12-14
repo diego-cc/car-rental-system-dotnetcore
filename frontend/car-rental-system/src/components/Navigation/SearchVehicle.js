@@ -22,13 +22,13 @@ export const SearchVehicle = () => {
     e.preventDefault();
 
     if (selected && selected.length) {
-      history.push(`/show/${selected[0].id}`);
+      history.push(`/show/${selected[0].uuid}`);
     }
   };
 
   useEffect(() => {
     if (selected.length) {
-      history.push(`/show/${selected[0].id}`);
+      history.push(`/show/${selected[0].uuid}`);
     }
   }, [selected, typeaheadRef, history]);
 

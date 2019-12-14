@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace Car_Rental_System_API
 {
@@ -58,6 +59,25 @@ namespace Car_Rental_System_API
         public static bool operator !=(Vehicle left, Vehicle right)
         {
             return !(left == right);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder s = new StringBuilder();
+            s.AppendLine("Vehicle:");
+            s.AppendLine($"id: ${Id}");
+            s.AppendLine($"uuid: ${Uuid}");
+            s.AppendLine($"manufacturer: ${Manufacturer}");
+            s.AppendLine($"model: ${Model}");
+            s.AppendLine($"year: ${Year}");
+            s.AppendLine($"odometer reading: ${Odometer} km");
+            s.AppendLine($"registration: ${Registration}");
+            s.AppendLine($"fuel type: ${FuelType}");
+            s.AppendLine($"tank size: ${TankSize}");
+            s.AppendLine($"created at: ${CreatedAt}");
+            s.AppendLine($"updated at: ${UpdatedAt}");
+
+            return s.ToString();
         }
     }
 }
