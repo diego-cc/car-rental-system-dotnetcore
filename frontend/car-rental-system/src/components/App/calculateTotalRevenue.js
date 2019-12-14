@@ -21,25 +21,25 @@ export const calculateTotalRevenue = (vehicles, state = null) => {
 		v
 		  .bookings
 		  .reduce((mappedBookings, b) => {
-			const {bookingCost} = b;
-			const bookingMonthAndYear = moment(b.startDate, "YYYY-MM-DD").format('MMMM YYYY');
+			const {cost} = b;
+			const bookingMonthAndYear = moment(b.startedAt, "YYYY-MM-DD").format('MMMM YYYY');
 			const mappedBooking = {
 			  bookingMonthAndYear,
-			  bookingCost
+			  cost
 			};
 			mappedBookings.push(mappedBooking);
 			return mappedBookings;
 		  }, [])
 		  .sort((mappedBooking1, mappedBooking2) => {
-			return moment(mappedBooking1.bookingMonthAndYear, 'MMMM YYYY').isSameOrBefore(moment(mappedBooking2.bookingMonthAndYear, 'MMMM YYYY'))
+			return moment(mappedBooking1.bookingMonthAndYear, 'MMMM YYYY').diff(moment(mappedBooking2.bookingMonthAndYear, 'MMMM YYYY'))
 		  })
 		  .reduce((bookingsByMonthAndYear, mappedBooking) => {
 			if (bookingsByMonthAndYear.some(b => moment(b.monthAndYear, 'MMMM YYYY').isSame(moment(mappedBooking.bookingMonthAndYear, 'MMMM YYYY')))) {
-			  bookingsByMonthAndYear[bookingsByMonthAndYear.findIndex(entry => moment(entry.monthAndYear, 'MMMM YYYY').isSame(moment(mappedBooking.bookingMonthAndYear, 'MMMM YYYY')))].revenue += mappedBooking.bookingCost;
+			  bookingsByMonthAndYear[bookingsByMonthAndYear.findIndex(entry => moment(entry.monthAndYear, 'MMMM YYYY').isSame(moment(mappedBooking.bookingMonthAndYear, 'MMMM YYYY')))].revenue += mappedBooking.cost;
 			} else {
 			  bookingsByMonthAndYear.push({
 				monthAndYear: mappedBooking.bookingMonthAndYear,
-				revenue: mappedBooking.bookingCost
+				revenue: mappedBooking.cost
 			  })
 			}
 			return bookingsByMonthAndYear;

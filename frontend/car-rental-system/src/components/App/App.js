@@ -57,7 +57,7 @@ export class App extends React.Component {
 	  }, () => {
 		this.setState(prevState => {
 		  const {vehicles} = {...prevState};
-		  const oldVehicleIndex = vehicles.findIndex(v => v.id === vehicle.id);
+		  const oldVehicleIndex = vehicles.findIndex(v => v.id === vehicle.uuid);
 		  const oldVehicle = vehicles[oldVehicleIndex];
 		  fieldsChanged = Object
 			.keys(oldVehicle)
@@ -76,7 +76,7 @@ export class App extends React.Component {
 		  })
 		}, () => {
 		  if (updateRemote) {
-			fetch(`/api/vehicles/${vehicle.id}`, {
+			fetch(`/api/vehicles/${vehicle.uuid}`, {
 			  method: 'PUT',
 			  headers: {
 				'Content-Type': 'application/json'
@@ -177,8 +177,8 @@ export class App extends React.Component {
 		  switch (collectionName) {
 			case 'services':
 			case 'bookings':
-			  selectedVehicle = vehicles.find(v => v.id === resource.vehicleID);
-			  selectedVehicleIndex = vehicles.findIndex(v => v.id === resource.vehicleID);
+			  selectedVehicle = vehicles.find(v => v.id === resource.vehicleUuid);
+			  selectedVehicleIndex = vehicles.findIndex(v => v.id === resource.vehicleUuid);
 			  if (collectionName === 'services') {
 				selectedVehicle.addService(resource);
 			  } else {
@@ -188,8 +188,8 @@ export class App extends React.Component {
 
 			case 'journeys':
 			case 'fuelPurchases':
-			  selectedVehicle = vehicles.find(v => v.bookings.some(b => b.id === resource.bookingID));
-			  selectedVehicleIndex = vehicles.findIndex(v => v.bookings.some(b => b.id === resource.bookingID));
+			  selectedVehicle = vehicles.find(v => v.bookings.some(b => b.id === resource.bookingUuid));
+			  selectedVehicleIndex = vehicles.findIndex(v => v.bookings.some(b => b.id === resource.bookingUuid));
 			  if (collectionName === 'journeys') {
 				selectedVehicle.addJourney(resource);
 			  } else {
@@ -302,7 +302,7 @@ export class App extends React.Component {
 			}
 			if (collection) {
 			  if (updateRemote) {
-				fetch(`/api/${collection}/${resource.id}`, {
+				fetch(`/api/${collection}/${resource.uuid}`, {
 				  method: 'DELETE'
 				})
 				  .then(() => {
@@ -404,7 +404,7 @@ export class App extends React.Component {
 			  const vehicleJourneys = v.journeys.map(j => new Journey(j.bookingUuid, j.startOdometer, j.endOdometer, j.startedAt, j.endedAt, j.journeyFrom, j.journeyTo, j.uuid, j.createdAt, j.updatedAt));
 
 			  vehicleBookings.forEach(b => {
-				const associatedJourneys = vehicleJourneys.filter(j => j.bookingID === b.id);
+				const associatedJourneys = vehicleJourneys.filter(j => j.bookingUuid === b.uuid);
 
 				associatedJourneys.forEach(j => {
 				  b.addJourney(j);
@@ -414,7 +414,7 @@ export class App extends React.Component {
 			  const vehicleFuelPurchases = v.fuelPurchases.map(f => new FuelPurchase(f.bookingUuid, f.fuelQuantity, f.fuelPrice, f.uuid, f.createdAt, f.updatedAt));
 
 			  vehicleBookings.forEach(b => {
-				const associatedFuelPurchases = vehicleFuelPurchases.filter(f => f.bookingID === b.id);
+				const associatedFuelPurchases = vehicleFuelPurchases.filter(f => f.bookingUuid === b.uuid);
 
 				associatedFuelPurchases.forEach(f => {
 				  b.addFuelPurchase(f);
@@ -423,7 +423,7 @@ export class App extends React.Component {
 
 			  const vehicleServices = v.services.map(s => new Service(s.vehicleUuid, s.odometer, s.servicedAt, s.uuid, s.createdAt, s.updatedAt));
 
-			  return new Vehicle(v.manufacturer, v.model, v.year, v.odometer, v.registration, v.tankSize, vehicleBookings, vehicleJourneys, vehicleFuelPurchases, vehicleServices, v.uuid, v.createdAt, v.updatedAt)
+			  return new Vehicle(v.manufacturer, v.model, v.year, v.odometer, v.registration, v.tankSize, vehicleBookings, vehicleJourneys, vehicleFuelPurchases, vehicleServices, v.uuid, v.createdAt, v.updatedAt);
 			})
 		  }, () => {
 		    this.setState({
@@ -434,71 +434,6 @@ export class App extends React.Component {
 		})
 		.catch(console.error);
 	})
-
-	/*this
-	  .fetchCollections('vehicles', 'bookings', 'journeys', 'services', 'fuelPurchases')
-	  .then(values => {
-		// move services, bookings, journeys and fuel purchases to the respective vehicle
-		this.setState(prevState => {
-		  const {services, bookings, journeys, fuelPurchases, vehicles} = values;
-
-		  let vehicleJourneys, vehicleServices, vehicleFuelPurchases;
-
-		  // add each booking to the respective vehicle
-		  vehicles.forEach(v => {
-			bookings
-			  .filter(b => b.vehicleID === v.id)
-			  .forEach(b => {
-				v.addBooking(b);
-			  })
-		  });
-
-		  // add all other collections to the respective vehicle
-		  vehicles.forEach(v => {
-			vehicleJourneys = journeys.filter(j => v.bookings.some(b => b.id === j.bookingID));
-			vehicleJourneys.forEach(j => {
-			  v.addJourney(j);
-			});
-
-			vehicleFuelPurchases = fuelPurchases.filter(f => v.bookings.some(b => b.id === f.bookingID));
-			vehicleFuelPurchases.forEach(f => {
-			  v.addFuelPurchase(f);
-			});
-
-			vehicleServices = services.filter(s => s.vehicleID === v.id);
-			vehicleServices.forEach(s => {
-			  v.addService(s);
-			});
-		  });
-		  // update odometers and notify user
-		  vehicles.forEach(v => {
-			v.updateVehicleOdometer(() => {
-			  this.setState({
-				notification: {
-				  display: true,
-				  message: `Updated odometer for ${v.manufacturer} ${v.model} (${v.year})`
-				}
-			  }, this.dismissNotification)
-			}, false);
-		  });
-
-		  const revenue = calculateTotalRevenue(vehicles);
-		  return ({
-			loading: false,
-			vehicles,
-			revenue
-		  })
-		});
-	  })
-	  .catch(err => {
-		// display error message
-		this.setState({
-		  notification: {
-			display: true,
-			message: `Error: ${err.message}`
-		  }
-		}, this.dismissNotification)
-	  })*/
   }
 
   /**

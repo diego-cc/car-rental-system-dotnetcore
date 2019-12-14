@@ -8,53 +8,54 @@ import moment from "moment";
  * @class
  */
 export class Service {
-  _id;
-  _vehicleID;
-  _serviceOdometer;
+  _uuid;
+  _vehicle;
+  _vehicleUuid;
+  _odometer;
   _servicedAt;
   _createdAt;
   _updatedAt;
 
   /**
    * Creates a new Service
-   * @param {string} vehicleID - ID of the vehicle associated with this service
-   * @param {number} serviceOdometer - odometer reading for this service
+   * @param {string} vehicleUuid - ID of the vehicle associated with this service
+   * @param {number} odometer - odometer reading for this service
    * @param {Date|string} servicedAt - when this service is due
-   * @param {string} id - ID of this service
+   * @param {string} uuid - UUID of this service
    * @param {string} createdAt - timestamp generated when this service is created
    * @param {string|null} updatedAt - timestamp generated when this service is updated
    */
-  constructor(vehicleID, serviceOdometer, servicedAt, id = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
-	this._id = id;
-	this._vehicleID = vehicleID;
-	this._serviceOdometer = serviceOdometer;
+  constructor(vehicleUuid, odometer, servicedAt, uuid = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
+	this._uuid = uuid;
+	this._vehicleUuid = vehicleUuid;
+	this._odometer = odometer;
 	this._servicedAt = servicedAt;
 	this._createdAt = createdAt;
 	this._updatedAt = updatedAt;
   }
 
-  get id() {
-	return this._id;
+  get uuid() {
+	return this._uuid;
   }
 
-  set id(value) {
-	this._id = value;
+  set uuid(value) {
+	this._uuid = value;
   }
 
-  get vehicleID() {
-	return this._vehicleID;
+  get vehicleUuid() {
+	return this._vehicleUuid;
   }
 
-  set vehicleID(value) {
-	this._vehicleID = value;
+  set vehicleUuid(value) {
+	this._vehicleUuid = value;
   }
 
-  get serviceOdometer() {
-	return this._serviceOdometer;
+  get odometer() {
+	return this._odometer;
   }
 
-  set serviceOdometer(value) {
-	this._serviceOdometer = value;
+  set odometer(value) {
+	this._odometer = value;
   }
 
   get servicedAt() {
@@ -91,9 +92,9 @@ export class Service {
   };
 
   /**
-   * Gets the {@link serviceOdometer} of the latest service done up to this date
+   * Gets the {@link odometer} of the latest service done up to this date
    * @param {Array<Service>} services - full list of services to be scanned
-   * @returns {string|number} serviceOdometer - the latest service odometer reading or an error
+   * @returns {string|number} odometer - the latest service odometer reading or an error
    * message, when no services in {@link services} have been made before this date
    */
   static getLastServiceOdometerReading = services => {
@@ -107,7 +108,7 @@ export class Service {
 	  }).find(s => moment(s.servicedAt).isBefore(now));
 
 	  if (firstServicesBeforeToday) {
-		return firstServicesBeforeToday.serviceOdometer;
+		return firstServicesBeforeToday.odometer;
 	  }
 	  return 'No services have been scheduled before today'
 	}

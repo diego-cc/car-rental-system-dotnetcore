@@ -48,7 +48,7 @@ export const VehicleDetails = props => {
 			</Accordion.Toggle>
 			<ButtonGroup aria-label="Options">
 			  <Link
-				to={`/edit/${vehicle.id}`}
+				to={`/edit/${vehicle.uuid}`}
 				className="mr-3"
 			  >
 				<Button
@@ -70,22 +70,22 @@ export const VehicleDetails = props => {
 				<Dropdown.Menu>
 				  <Dropdown.Item
 					as={Link}
-					to={`/addService/${vehicle.id}`}>
+					to={`/addService/${vehicle.uuid}`}>
 					Add service
 				  </Dropdown.Item>
 				  <Dropdown.Item
 					as={Link}
-					to={`/addBooking/${vehicle.id}`}>
+					to={`/addBooking/${vehicle.uuid}`}>
 					Add booking
 				  </Dropdown.Item>
 				  <Dropdown.Item
 					as={Link}
-					to={`/addJourney/${vehicle.id}`}>
+					to={`/addJourney/${vehicle.uuid}`}>
 					Add journey
 				  </Dropdown.Item>
 				  <Dropdown.Item
 					as={Link}
-					to={`/addFuelPurchase/${vehicle.id}`}>
+					to={`/addFuelPurchase/${vehicle.uuid}`}>
 					Add fuel purchase
 				  </Dropdown.Item>
 				</Dropdown.Menu>
@@ -109,7 +109,7 @@ export const VehicleDetails = props => {
 					))
 				}
 				<ListGroup.Item>
-				  Tank capacity: {vehicle.tankCapacity} L
+				  Tank capacity: {vehicle.tankSize} L
 				</ListGroup.Item>
 				<ListGroup.Item>
 				  <Accordion>
@@ -129,7 +129,7 @@ export const VehicleDetails = props => {
 							vehicleBookings &&
 							vehicleBookings
 							  .sort((b1, b2) => (
-								moment(b2.startDate).isBefore(moment(b1.startDate))
+								moment(b2.startedAt).isBefore(moment(b1.startedAt))
 							  ))
 							  .map((booking, index) => (
 								<Accordion key={index}>
@@ -140,7 +140,7 @@ export const VehicleDetails = props => {
 										as={Button}
 										variant="link"
 										eventKey={index}>
-										{`${new Date(booking.startDate).toLocaleDateString("en-AU")} - ${new Date(booking.endDate).toLocaleDateString("en-AU")}`}
+										{`${new Date(booking.startedAt).toLocaleDateString("en-AU")} - ${new Date(booking.endedAt).toLocaleDateString("en-AU")}`}
 									  </Accordion.Toggle>
 									  <Button
 										onClick={() => deleteResource.setDeleteResourceModalShow('booking', booking)}
@@ -151,14 +151,14 @@ export const VehicleDetails = props => {
 									</Card.Header>
 									<Accordion.Collapse eventKey={index}>
 									  <Card.Body>
-										<ListGroup key={booking.id}>
+										<ListGroup key={booking.uuid}>
 										  <ListGroup.Item>
 											Start
-											Date: {new Date(booking.startDate).toLocaleDateString("en-AU")}
+											Date: {new Date(booking.startedAt).toLocaleDateString("en-AU")}
 										  </ListGroup.Item>
 										  <ListGroup.Item>
 											End
-											Date: {new Date(booking.endDate).toLocaleDateString("en-AU")}
+											Date: {new Date(booking.endedAt).toLocaleDateString("en-AU")}
 										  </ListGroup.Item>
 										  <ListGroup.Item>
 											Start
@@ -174,7 +174,7 @@ export const VehicleDetails = props => {
 										  </ListGroup.Item>
 										  <ListGroup.Item>
 											Booking cost: {
-											booking.bookingCost ? `$ ${Number.parseFloat(booking.bookingCost).toFixed(2)}` : 'Pending'
+											booking.cost ? `$ ${Number.parseFloat(booking.cost).toFixed(2)}` : 'Pending'
 										  }
 										  </ListGroup.Item>
 										</ListGroup>
@@ -208,8 +208,8 @@ export const VehicleDetails = props => {
 							vehicleJourneys &&
 							vehicleJourneys
 							  .sort((journey1, journey2) => {
-								const journey1StartedAt = new Date(journey1.journeyStartedAt);
-								const journey2StartedAt = new Date(journey2.journeyStartedAt);
+								const journey1StartedAt = new Date(journey1.startedAt);
+								const journey2StartedAt = new Date(journey2.startedAt);
 								if (journey1StartedAt > journey2StartedAt) {
 								  return -1;
 								} else if (journey1StartedAt < journey2StartedAt) {
@@ -226,7 +226,7 @@ export const VehicleDetails = props => {
 										as={Button}
 										variant="link"
 										eventKey={index}>
-										{`${new Date(journey.journeyStartedAt).toLocaleDateString("en-AU")} - ${new Date(journey.journeyEndedAt).toLocaleDateString("en-AU")}`}
+										{`${new Date(journey.startedAt).toLocaleDateString("en-AU")} - ${new Date(journey.endedAt).toLocaleDateString("en-AU")}`}
 									  </Accordion.Toggle>
 									  <Button
 										onClick={() => deleteResource.setDeleteResourceModalShow('journey', journey)}
@@ -237,22 +237,22 @@ export const VehicleDetails = props => {
 									</Card.Header>
 									<Accordion.Collapse eventKey={index}>
 									  <Card.Body>
-										<ListGroup key={journey.id}>
+										<ListGroup key={journey.uuid}>
 										  <ListGroup.Item>
 											Journey started
-											at: {new Date(journey.journeyStartedAt).toLocaleDateString("en-AU")}
+											at: {new Date(journey.startedAt).toLocaleDateString("en-AU")}
 										  </ListGroup.Item>
 										  <ListGroup.Item>
 											Journey ended
-											at: {new Date(journey.journeyEndedAt).toLocaleDateString("en-AU")}
+											at: {new Date(journey.endedAt).toLocaleDateString("en-AU")}
 										  </ListGroup.Item>
 										  <ListGroup.Item>
 											Journey start odometer
-											reading: {journey.journeyStartOdometerReading} km
+											reading: {journey.startOdometer} km
 										  </ListGroup.Item>
 										  <ListGroup.Item>
 											Journey end odometer
-											reading: {journey.journeyEndOdometerReading} km
+											reading: {journey.endOdometer} km
 										  </ListGroup.Item>
 										  <ListGroup.Item>
 											Journey from: {journey.journeyFrom}
@@ -302,7 +302,7 @@ export const VehicleDetails = props => {
 							  })
 							  .map((service, index) => (
 								<Accordion key={index}>
-								  <Card key={service.id}>
+								  <Card key={service.uuid}>
 									<Card.Header>
 									  <Accordion.Toggle
 										className="mr-auto"
@@ -328,7 +328,7 @@ export const VehicleDetails = props => {
 										  </ListGroup.Item>
 										  <ListGroup.Item>
 											Service
-											odometer: {service.serviceOdometer} km
+											odometer: {service.odometer} km
 										  </ListGroup.Item>
 										</ListGroup>
 									  </Card.Body>
@@ -361,10 +361,10 @@ export const VehicleDetails = props => {
 							vehicleFuelPurchases &&
 							vehicleFuelPurchases
 							  .sort((fuelPurchase1, fuelPurchase2) => {
-								const bookingFuelPurchase1 = vehicleBookings.find(booking => booking.id === fuelPurchase1.bookingID);
-								const booking1StartedAt = new Date(bookingFuelPurchase1.startDate);
-								const bookingFuelPurchase2 = vehicleBookings.find(booking => booking.id === fuelPurchase2.bookingID);
-								const booking2StartedAt = new Date(bookingFuelPurchase2.startDate);
+								const bookingFuelPurchase1 = vehicleBookings.find(booking => booking.uuid === fuelPurchase1.bookingUuid);
+								const booking1StartedAt = new Date(bookingFuelPurchase1.startedAt);
+								const bookingFuelPurchase2 = vehicleBookings.find(booking => booking.uuid === fuelPurchase2.bookingUuid);
+								const booking2StartedAt = new Date(bookingFuelPurchase2.startedAt);
 								if (booking1StartedAt > booking2StartedAt) {
 								  return -1;
 								} else if (booking1StartedAt < booking2StartedAt) {
@@ -381,7 +381,7 @@ export const VehicleDetails = props => {
 										as={Button}
 										variant="link"
 										eventKey={index}>
-										{`${new Date(vehicleBookings.find(booking => booking.id === fuelPurchase.bookingID).startDate).toLocaleDateString("en-AU")} - ${new Date(vehicleBookings.find(booking => booking.id === fuelPurchase.bookingID).endDate).toLocaleDateString("en-AU")}`}
+										{`${new Date(vehicleBookings.find(booking => booking.uuid === fuelPurchase.bookingUuid).startedAt).toLocaleDateString("en-AU")} - ${new Date(vehicleBookings.find(booking => booking.uuid === fuelPurchase.bookingUuid).endedAt).toLocaleDateString("en-AU")}`}
 									  </Accordion.Toggle>
 									  <Button
 										onClick={() => deleteResource.setDeleteResourceModalShow('fuel purchase', fuelPurchase)}
@@ -392,7 +392,7 @@ export const VehicleDetails = props => {
 									</Card.Header>
 									<Accordion.Collapse eventKey={index}>
 									  <Card.Body>
-										<ListGroup key={fuelPurchase.id}>
+										<ListGroup key={fuelPurchase.uuid}>
 										  <ListGroup.Item>
 											Fuel
 											quantity: {fuelPurchase.fuelQuantity} L
@@ -425,4 +425,4 @@ export const VehicleDetails = props => {
 	  <DeleteResourceModal/>
 	</>
   )
-}
+};

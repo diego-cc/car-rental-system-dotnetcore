@@ -130,9 +130,9 @@ namespace Car_Rental_System_API.Controllers
         [HttpPost]
         public async Task<ActionResult<Vehicle>> PostVehicle(Vehicle vehicle)
         {
-            
-            //_context.Vehicles.Add(vehicle);
-            // await _context.SaveChangesAsync();
+            Console.WriteLine(vehicle);
+            _context.Vehicles.Add(vehicle);
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetVehicleById), new { id = vehicle.Id }, vehicle);
         }

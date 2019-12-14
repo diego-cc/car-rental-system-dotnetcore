@@ -8,12 +8,15 @@ import moment from "moment";
  * @class
  */
 export class Journey {
-  _id;
-  _bookingID;
-  _journeyStartOdometerReading;
-  _journeyEndOdometerReading;
-  _journeyStartedAt;
-  _journeyEndedAt;
+  _uuid;
+  _booking;
+  _bookingUuid;
+  _vehicle;
+  _vehicleUuid;
+  _startOdometer;
+  _endOdometer;
+  _startedAt;
+  _endedAt;
   _journeyFrom;
   _journeyTo;
   _createdAt;
@@ -21,76 +24,76 @@ export class Journey {
 
   /**
    * Creates a new Journey
-   * @param {string} bookingID - ID of the booking associated with this journey
-   * @param {number} journeyStartOdometerReading - odometer reading at the start of this journey
-   * @param {number} journeyEndOdometerReading - odometer reading at the end of this journey
-   * @param {Date|string} journeyStartedAt - start date of this journey
-   * @param {Date|string} journeyEndedAt - end date of this journey
+   * @param {string} bookingUuid - ID of the booking associated with this journey
+   * @param {number} startOdometer - odometer reading at the start of this journey
+   * @param {number} endOdometer - odometer reading at the end of this journey
+   * @param {Date|string} startedAt - start date of this journey
+   * @param {Date|string} endedAt - end date of this journey
    * @param {string} journeyFrom - location where the journey started
    * @param {string} journeyTo - location where the journey ended
-   * @param {string} id - ID of this journey
+   * @param {string} uuid - UUID of this journey
    * @param {string} createdAt - timestamp generated when this journey is created
    * @param {string|null} updatedAt - timestamp generated when this journey is updated
    */
-  constructor(bookingID, journeyStartOdometerReading, journeyEndOdometerReading, journeyStartedAt, journeyEndedAt, journeyFrom, journeyTo, id = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
-	this._id = id;
-	this._bookingID = bookingID;
-	this._journeyStartOdometerReading = journeyStartOdometerReading;
-	this._journeyEndOdometerReading = journeyEndOdometerReading;
-	this._journeyStartedAt = journeyStartedAt;
-	this._journeyEndedAt = journeyEndedAt;
+  constructor(bookingUuid, startOdometer, endOdometer, startedAt, endedAt, journeyFrom, journeyTo, uuid = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
+	this._uuid = uuid;
+	this._bookingUuid = bookingUuid;
+	this._startOdometer = startOdometer;
+	this._endOdometer = endOdometer;
+	this._startedAt = startedAt;
+	this._endedAt = endedAt;
 	this._journeyFrom = journeyFrom;
 	this._journeyTo = journeyTo;
 	this._createdAt = createdAt;
 	this._updatedAt = updatedAt;
   }
 
-  get id() {
-	return this._id;
+  get uuid() {
+	return this._uuid;
   }
 
-  set id(value) {
-	this._id = value;
+  set uuid(value) {
+	this._uuid = value;
   }
 
-  get bookingID() {
-	return this._bookingID;
+  get bookingUuid() {
+	return this._bookingUuid;
   }
 
-  set bookingID(value) {
-	this._bookingID = value;
+  set bookingUuid(value) {
+	this._bookingUuid = value;
   }
 
-  get journeyStartOdometerReading() {
-	return this._journeyStartOdometerReading;
+  get startOdometer() {
+	return this._startOdometer;
   }
 
-  set journeyStartOdometerReading(value) {
-	this._journeyStartOdometerReading = value;
+  set startOdometer(value) {
+	this._startOdometer = value;
   }
 
-  get journeyEndOdometerReading() {
-	return this._journeyEndOdometerReading;
+  get endOdometer() {
+	return this._endOdometer;
   }
 
-  set journeyEndOdometerReading(value) {
-	this._journeyEndOdometerReading = value;
+  set endOdometer(value) {
+	this._endOdometer = value;
   }
 
-  get journeyStartedAt() {
-	return this._journeyStartedAt;
+  get startedAt() {
+	return this._startedAt;
   }
 
-  set journeyStartedAt(value) {
-	this._journeyStartedAt = value;
+  set startedAt(value) {
+	this._startedAt = value;
   }
 
-  get journeyEndedAt() {
-	return this._journeyEndedAt;
+  get endedAt() {
+	return this._endedAt;
   }
 
-  set journeyEndedAt(value) {
-	this._journeyEndedAt = value;
+  set endedAt(value) {
+	this._endedAt = value;
   }
 
   get journeyFrom() {

@@ -9,13 +9,13 @@ import {Service} from "./Service";
  * @class
  */
 export class Vehicle {
-  _id;
+  _uuid;
   _manufacturer;
   _model;
   _year;
-  _odometerReading;
-  _registrationNumber;
-  _tankCapacity;
+  _odometer;
+  _registration;
+  _tankSize;
   _fuelEconomy;
   _bookings;
   _journeys;
@@ -24,31 +24,30 @@ export class Vehicle {
   _createdAt;
   _updatedAt;
 
-
   /**
    * Creates a new Vehicle
    * @param {string} manufacturer - manufacturer brand of this vehicle
    * @param {string} model - model of this vehicle
    * @param {number} year - year of this vehicle
-   * @param {number} odometerReading - odometer reading of this vehicle
-   * @param {string} registrationNumber - registration number of this vehicle
-   * @param {number} tankCapacity - tank capacity of this vehicle
+   * @param {number} odometer - odometer reading of this vehicle
+   * @param {string} registration - registration number of this vehicle
+   * @param {number} tankSize - tank capacity of this vehicle
    * @param {Array<Booking>} bookings - bookings associated with this vehicle
    * @param {Array<Journey>} journeys - journeys associated with this vehicle
    * @param {Array<FuelPurchase>} fuelPurchases - fuel purchases associated with this vehicle
    * @param {Array<Service>} services - services associated with this vehicle
-   * @param {string} id - ID of this vehicle
+   * @param {string} uuid - UUID of this vehicle
    * @param {string} createdAt - timestamp generated when this vehicle is created
    * @param {string|null} updatedAt - timestamp generated when this vehicle is updated
    */
-  constructor(manufacturer, model, year, odometerReading, registrationNumber, tankCapacity, bookings = [], journeys = [], fuelPurchases = [], services = [], id = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
-	this._id = id;
+  constructor(manufacturer, model, year, odometer, registration, tankSize, bookings = [], journeys = [], fuelPurchases = [], services = [], uuid = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
+	this._uuid = uuid;
 	this._manufacturer = manufacturer;
 	this._model = model;
 	this._year = year;
-	this._odometerReading = odometerReading;
-	this._registrationNumber = registrationNumber;
-	this._tankCapacity = tankCapacity;
+	this._odometer = odometer;
+	this._registration = registration;
+	this._tankSize = tankSize;
 	this._bookings = bookings;
 	this._journeys = journeys;
 	this._fuelPurchases = fuelPurchases;
@@ -69,15 +68,15 @@ export class Vehicle {
 
   /**
    * Removes a booking from {@link bookings} by its ID
-   * @param {string} bookingID - the ID of the booking to be removed
+   * @param {string} bookingUuid - the ID of the booking to be removed
    */
-  removeBookingByID(bookingID) {
-	if (bookingID) {
+  removeBookingByID(bookingUuid) {
+	if (bookingUuid) {
 	  const bookingsCopy = [...this.bookings];
-	  const bookingToBeDeleted = bookingsCopy.find(booking => booking.id === bookingID);
+	  const bookingToBeDeleted = bookingsCopy.find(booking => booking.id === bookingUuid);
 
 	  if (bookingToBeDeleted) {
-		this.bookings = bookingsCopy.filter(booking => booking.id !== bookingToBeDeleted.id);
+		this.bookings = bookingsCopy.filter(booking => booking.uuid !== bookingToBeDeleted.uuid);
 		this.updateVehicleOdometer(null, false);
 	  }
 	}
@@ -86,10 +85,10 @@ export class Vehicle {
   /**
    * Removes a journey from {@link journeys} by its associated bookingID
    * @param {Journey} journey - the journey to be removed
-   * @param {string} bookingID - the ID of the booking that contains the journey to be removed
+   * @param {string} bookingUuid - the UUID of the booking that contains the journey to be removed
    */
-  removeJourneyByBookingID(journey, bookingID) {
-	this.bookings.find(b => b.id === bookingID).removeJourney(journey);
+  removeJourneyByBookingID(journey, bookingUuid) {
+	this.bookings.find(b => b.uuid === bookingUuid).removeJourney(journey);
 	this.updateVehicleOdometer(null, false);
   }
 
@@ -98,7 +97,7 @@ export class Vehicle {
    * @param {Journey} newJourney - the new journey to be added
    */
   addJourney(newJourney) {
-	this.bookings.find(b => b.id === newJourney.bookingID).addJourney(newJourney);
+	this.bookings.find(b => b.uuid === newJourney.bookingUuid).addJourney(newJourney);
 	this.updateVehicleOdometer(null, false);
   }
 
@@ -110,13 +109,13 @@ export class Vehicle {
 	this.services.push(newService);
   }
 
-  removeServiceByID(serviceID) {
-	if (serviceID) {
+  removeServiceByID(serviceUuid) {
+	if (serviceUuid) {
 	  const servicesCopy = [...this.services];
-	  const serviceToBeDeleted = servicesCopy.find(service => service.id === serviceID);
+	  const serviceToBeDeleted = servicesCopy.find(service => service.uuid === serviceUuid);
 
 	  if (serviceToBeDeleted) {
-		this.services = servicesCopy.filter(service => service.id !== serviceToBeDeleted.id);
+		this.services = servicesCopy.filter(service => service.uuid !== serviceToBeDeleted.uuid);
 	  }
 	}
   }
@@ -126,16 +125,16 @@ export class Vehicle {
    * @param {FuelPurchase} newFuelPurchase - The new fuel purchase to be added
    */
   addFuelPurchase(newFuelPurchase) {
-	this.bookings.find(b => b.id === newFuelPurchase.bookingID).addFuelPurchase(newFuelPurchase);
+	this.bookings.find(b => b.uuid === newFuelPurchase.bookingUuid).addFuelPurchase(newFuelPurchase);
   }
 
   /**
    * Removes a fuel purchase based on its bookingID
    * @param {FuelPurchase} fuelPurchase - The fuel purchase to be removed
-   * @param {string} bookingID - The ID of the booking associated with this fuel purchase
+   * @param {string} bookingUuid - The ID of the booking associated with this fuel purchase
    */
-  removeFuelPurchaseByBookingID(fuelPurchase, bookingID) {
-	this.bookings.find(b => b.id === bookingID).removeFuelPurchase(fuelPurchase);
+  removeFuelPurchaseByBookingID(fuelPurchase, bookingUuid) {
+	this.bookings.find(b => b.uuid === bookingUuid).removeFuelPurchase(fuelPurchase);
   }
 
   get bookings() {
@@ -166,12 +165,12 @@ export class Vehicle {
 	this._fuelPurchases = value;
   }
 
-  get id() {
-	return this._id;
+  get uuid() {
+	return this._uuid;
   }
 
-  set id(value) {
-	this._id = value;
+  set uuid(value) {
+	this._uuid = value;
   }
 
   get manufacturer() {
@@ -198,28 +197,28 @@ export class Vehicle {
 	this._year = value;
   }
 
-  get odometerReading() {
-	return this._odometerReading;
+  get odometer() {
+	return this._odometer;
   }
 
-  set odometerReading(value) {
-	this._odometerReading = value;
+  set odometer(value) {
+	this._odometer = value;
   }
 
-  get registrationNumber() {
-	return this._registrationNumber;
+  get registration() {
+	return this._registration;
   }
 
-  set registrationNumber(value) {
-	this._registrationNumber = value;
+  set registration(value) {
+	this._registration = value;
   }
 
-  get tankCapacity() {
-	return this._tankCapacity;
+  get tankSize() {
+	return this._tankSize;
   }
 
-  set tankCapacity(value) {
-	this._tankCapacity = value;
+  set tankSize(value) {
+	this._tankSize = value;
   }
 
   get createdAt() {
@@ -245,11 +244,11 @@ export class Vehicle {
   printDetails() {
 	return ({
 	  'Vehicle': `${this.manufacturer} ${this.model} (${this.year})`,
-	  'Registration Number': this.registrationNumber,
-	  'Total Kilometers Travelled': `${this.odometerReading} km`,
+	  'Registration Number': this.registration,
+	  'Total Kilometers Travelled': `${this.odometer} km`,
 	  'Total services done': Service.getTotalServicesDone(this.services),
 	  'Revenue recorded': `$ ${Number.parseFloat(this.calculateRevenueRecorded()).toFixed(2)}`,
-	  'Kilometers since the last service': Number.parseFloat(Service.getLastServiceOdometerReading(this.services)) ? `${this.odometerReading - Service.getLastServiceOdometerReading(this.services)} km` : Service.getLastServiceOdometerReading(this.services),
+	  'Kilometers since the last service': Number.parseFloat(Service.getLastServiceOdometerReading(this.services)) ? `${this.odometer - Service.getLastServiceOdometerReading(this.services)} km` : Service.getLastServiceOdometerReading(this.services),
 	  'Fuel economy': `${this.calculateFuelEconomy()}`,
 	  'Requires service': Service.requiresService(this.services) ? 'Yes' : 'No'
 	})
@@ -261,8 +260,8 @@ export class Vehicle {
    */
   calculateRevenueRecorded() {
 	return this.bookings.reduce((total, b) => {
-	  if (Number.parseFloat(b.bookingCost)) {
-		total += b.bookingCost;
+	  if (Number.parseFloat(b.cost)) {
+		total += b.cost;
 	  }
 	  return total;
 	}, 0);
@@ -302,7 +301,7 @@ export class Vehicle {
 	return (
 	  this.bookings.reduce((totalDistance, booking) => {
 		booking.journeys.forEach(j => {
-		  totalDistance += j.journeyEndOdometerReading - j.journeyStartOdometerReading
+		  totalDistance += j.endOdometer - j.startOdometer
 		}, 0);
 		return totalDistance;
 	  }, 0)
@@ -320,7 +319,7 @@ export class Vehicle {
 	  if (this.bookings.length) {
 		const todaysJourneys = this.bookings.reduce((j, b) => {
 		  if (b.journeys.length) {
-			j.push(...b.journeys.filter(j => moment(j.journeyEndedAt).isSame(moment(), 'days')));
+			j.push(...b.journeys.filter(j => moment(j.endedAt).isSame(moment(), 'days')));
 		  }
 		  return j;
 		}, []);
@@ -328,11 +327,11 @@ export class Vehicle {
 
 		// get greatest journeyEndOdometerReading for all journeys that end today
 		const greatestEndOdometer = todaysJourneys.reduce((greatestEndOdometer, j) => {
-		  return Math.max(greatestEndOdometer, j.journeyEndOdometerReading);
+		  return Math.max(greatestEndOdometer, j.endOdometer);
 		}, 0);
 
 		// update odometer reading for this vehicle
-		this.odometerReading = greatestEndOdometer ? greatestEndOdometer : this.odometerReading;
+		this.odometer = greatestEndOdometer ? greatestEndOdometer : this.odometer;
 	  }
 	}
   }
