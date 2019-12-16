@@ -26,9 +26,9 @@ export const AddFuelPurchaseForm = () => {
   const [addFuelPurchase, setAddFuelPurchase] = useState(false);
   const {bookingID} = useParams();
   const history = useHistory();
-  const vehicleToBeModified = vehicles.find(v => v.bookings.some(b => b.id === bookingID));
+  const vehicleToBeModified = vehicles.find(v => v.bookings.some(b => b.uuid === bookingID));
   const vehicle = cloneDeep(vehicleToBeModified);
-  const booking = vehicle ? vehicle.bookings.find(b => b.id === bookingID) : null;
+  const booking = vehicle ? vehicle.bookings.find(b => b.uuid === bookingID) : null;
   const associatedBooking = cloneDeep(booking);
 
   // Defines a schema for the form to add a new fuel purchase
@@ -38,7 +38,7 @@ export const AddFuelPurchaseForm = () => {
 	  .moreThan(0, 'Invalid fuel quantity')
 	  .max(
 		vehicle ?
-		  vehicle.tankCapacity : 0,
+		  vehicle.tankSize : 0,
 		'Cannot be greater than the tank capacity of this vehicle'
 	  )
 	  .required('This field is required'),
@@ -53,9 +53,9 @@ export const AddFuelPurchaseForm = () => {
   useEffect(() => {
 	if (addFuelPurchase && fuelPurchaseToBeAdded) {
 	  addResource('fuel purchase', fuelPurchaseToBeAdded);
-	  history.push(`/show/${vehicle.id}`);
+	  history.push(`/show/${vehicle.uuid}`);
 	}
-  }, [addFuelPurchase, addResource, fuelPurchaseToBeAdded, history, vehicle.id]);
+  }, [addFuelPurchase, addResource, fuelPurchaseToBeAdded, history, vehicle.uuid]);
 
   return (
 	<Container>
@@ -72,7 +72,7 @@ export const AddFuelPurchaseForm = () => {
 		  <h2 className="text-center my-5">Register new fuel purchase
 			for {vehicle ? `${vehicle.manufacturer} ${vehicle.model} (${vehicle.year})` : ''},
 			booked
-			for: {associatedBooking ? `${moment(associatedBooking.startDate, 'YYYY-MM-DD').format('DD/MM/YYYY')}` : ''} - {associatedBooking ? `${moment(associatedBooking.endDate, 'YYYY-MM-DD').format('DD/MM/YYYY')}` : ''}</h2>
+			for: {associatedBooking ? `${moment(associatedBooking.startedAt, 'YYYY-MM-DD').format('DD/MM/YYYY')}` : ''} - {associatedBooking ? `${moment(associatedBooking.endedAt, 'YYYY-MM-DD').format('DD/MM/YYYY')}` : ''}</h2>
 		</Col>
 	  </Row>
 	  {
@@ -93,7 +93,7 @@ export const AddFuelPurchaseForm = () => {
 				setAddFuelPurchase(true);
 			  }}
 			  initialValues={{
-				fuelQuantity: vehicle ? vehicle.tankCapacity : '',
+				fuelQuantity: vehicle ? vehicle.tankSize : '',
 				fuelPrice: ''
 			  }}
 			>
@@ -166,7 +166,7 @@ export const AddFuelPurchaseForm = () => {
 					<Button
 					  variant="danger"
 					  size="lg"
-					  onClick={() => history.push(`/show/${vehicle.id}`)}
+					  onClick={() => history.push(`/show/${vehicle.uuid}`)}
 					>
 					  Cancel
 					</Button>

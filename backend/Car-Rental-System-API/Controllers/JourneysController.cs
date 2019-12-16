@@ -130,7 +130,7 @@ namespace Car_Rental_System_API.Controllers
             _context.Journeys.Add(journey);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetJourney", new { id = journey.Id }, journey);
+            return CreatedAtAction(nameof(GetJourney), new { uuid = journey.Uuid }, journey);
         }
 
         // DELETE: api/Journeys/5

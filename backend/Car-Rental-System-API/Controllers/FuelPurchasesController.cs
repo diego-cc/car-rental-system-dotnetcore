@@ -48,7 +48,7 @@ namespace Car_Rental_System_API.Controllers
         }
 
         // GET: api/FuelPurchases/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<FuelPurchase>> GetFuelPurchase(ulong id)
         {
             var fuelPurchase = await _context.FuelPurchases.FindAsync(id);
@@ -61,10 +61,24 @@ namespace Car_Rental_System_API.Controllers
             return fuelPurchase;
         }
 
+        // GET: api/FuelPurchases/65680537-130d-4469-83cb-5c407721f736
+        [HttpGet("{uuid:guid}")]
+        public async Task<ActionResult<FuelPurchase>> GetFuelPurchase(Guid uuid)
+        {
+            var fuelPurchase = await _context.FuelPurchases.SingleOrDefaultAsync(f => f.Uuid == uuid);
+
+            if (fuelPurchase == null)
+            {
+                return NotFound();
+            }
+
+            return fuelPurchase;
+        }
+
         // PUT: api/FuelPurchases/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
+        [HttpPut("{id:long}")]
         public async Task<IActionResult> PutFuelPurchase(ulong id, FuelPurchase fuelPurchase)
         {
             if (id != fuelPurchase.Id)
@@ -99,6 +113,20 @@ namespace Car_Rental_System_API.Controllers
         [HttpPost]
         public async Task<ActionResult<FuelPurchase>> PostFuelPurchase(FuelPurchase fuelPurchase)
         {
+            var associatedVehicle = await _context.Vehicles.SingleOrDefaultAsync(v => v.Uuid == fuelPurchase.VehicleUuid);
+            var associatedBooking = await _context.Bookings.SingleOrDefaultAsync(b => b.Uuid == fuelPurchase.BookingUuid);
+
+            if (associatedVehicle == null || associatedBooking == null)
+            {
+                return BadRequest();
+            }
+
+            fuelPurchase.Vehicle = associatedVehicle;
+            fuelPurchase.Booking = associatedBooking;
+
+            fuelPurchase.VehicleId = associatedVehicle.Id;
+            fuelPurchase.BookingId = associatedBooking.Id;
+
             _context.FuelPurchases.Add(fuelPurchase);
             await _context.SaveChangesAsync();
 
@@ -106,10 +134,27 @@ namespace Car_Rental_System_API.Controllers
         }
 
         // DELETE: api/FuelPurchases/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:long}")]
         public async Task<ActionResult<FuelPurchase>> DeleteFuelPurchase(ulong id)
         {
             var fuelPurchase = await _context.FuelPurchases.FindAsync(id);
+            if (fuelPurchase == null)
+            {
+                return NotFound();
+            }
+
+            _context.FuelPurchases.Remove(fuelPurchase);
+            await _context.SaveChangesAsync();
+
+            return fuelPurchase;
+        }
+
+        // DELETE: api/FuelPurchases/65680537-130d-4469-83cb-5c407721f736
+        [HttpDelete("{uuid:guid}")]
+        public async Task<ActionResult<FuelPurchase>> DeleteFuelPurchase(Guid uuid)
+        {
+            var fuelPurchase = await _context.FuelPurchases.SingleOrDefaultAsync(f => f.Uuid == uuid);
+
             if (fuelPurchase == null)
             {
                 return NotFound();
