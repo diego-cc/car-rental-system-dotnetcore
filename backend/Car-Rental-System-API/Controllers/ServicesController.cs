@@ -41,7 +41,7 @@ namespace Car_Rental_System_API.Controllers
         }
 
         // GET: api/Services/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<Service>> GetService(ulong id)
         {
             var service = await _context.Services.FindAsync(id);
@@ -50,6 +50,23 @@ namespace Car_Rental_System_API.Controllers
             {
                 return NotFound();
             }
+
+            return service;
+        }
+
+        // GET: api/Services/65680537-130d-4469-83cb-5c407721f736
+        [HttpGet("{id:guid}")]
+        public async Task<ActionResult<Service>> GetService(Guid uuid)
+        {
+            var service = await _context.Services.SingleOrDefaultAsync(s => s.Uuid == uuid);
+
+            if (service == null)
+            {
+                return NotFound();
+            }
+
+            var associatedVehicle = await _context.Vehicles.SingleOrDefaultAsync(v => v.Uuid == service.VehicleUuid);
+            service.Vehicle = associatedVehicle;
 
             return service;
         }
@@ -92,14 +109,24 @@ namespace Car_Rental_System_API.Controllers
         [HttpPost]
         public async Task<ActionResult<Service>> PostService(Service service)
         {
+            var associatedVehicle = await _context.Vehicles.SingleOrDefaultAsync(v => v.Uuid == service.VehicleUuid);
+
+            if (associatedVehicle == null)
+            {
+                return BadRequest();
+            }
+
+            service.VehicleId = associatedVehicle.Id;
+            service.Vehicle = associatedVehicle;
+
             _context.Services.Add(service);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetService", new { id = service.Id }, service);
+            return CreatedAtAction(nameof(GetService), new { id = service.Id }, service);
         }
 
         // DELETE: api/Services/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:long}")]
         public async Task<ActionResult<Service>> DeleteService(ulong id)
         {
             var service = await _context.Services.FindAsync(id);
@@ -114,9 +141,31 @@ namespace Car_Rental_System_API.Controllers
             return service;
         }
 
+        // DELETE: api/Services/65680537-130d-4469-83cb-5c407721f736
+        [HttpDelete("{uuid:long}")]
+        public async Task<ActionResult<Service>> DeleteService(Guid uuid)
+        {
+            var service = await _context.Services.SingleOrDefaultAsync(s => s.Uuid == uuid);
+
+            if (service == null)
+            {
+                return NotFound();
+            }
+
+            _context.Services.Remove(service);
+            await _context.SaveChangesAsync();
+
+            return service;
+        }
+
         private bool ServiceExists(ulong id)
         {
             return _context.Services.Any(e => e.Id == id);
+        }
+        
+        private bool ServiceExists(Guid uuid)
+        {
+            return _context.Services.Any(s => s.Uuid == uuid);
         }
     }
 }
