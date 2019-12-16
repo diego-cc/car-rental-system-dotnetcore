@@ -2,7 +2,7 @@
 
 This repository is an implementation of the previous [car rental system](https://github.com/diego-cc/car-rental-system/tree/mysql "Car Rental System") that I developed for an assignment at North Metropolitan TAFE, with a backend API server written in [ASP.NET Core 3.1](https://docs.microsoft.com/en-us/aspnet/core/?view=aspnetcore-3.1 "ASP.NET Core 3.1").
 
-This version does not yet provide all of the functionalities of the previous one.
+~~This version does not yet provide all of the functionalities of the previous one.~~ Now it does!
 
 ## Requirements
 
