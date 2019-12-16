@@ -170,7 +170,8 @@ export const VehicleDetails = props => {
 										  </ListGroup.Item>
 										  <ListGroup.Item>
 											Booking
-											Type: {booking.bookingType === 'D' ? 'Per day' : 'Per kilometer'}
+											Type: {booking.type === 'D' ? 'Per day' : 'Per' +
+											' kilometer'}
 										  </ListGroup.Item>
 										  <ListGroup.Item>
 											Booking cost: {

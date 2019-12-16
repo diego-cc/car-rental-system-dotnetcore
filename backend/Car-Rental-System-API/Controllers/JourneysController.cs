@@ -47,7 +47,7 @@ namespace Car_Rental_System_API.Controllers
         }
 
         // GET: api/Journeys/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<Journey>> GetJourney(ulong id)
         {
             var journey = await _context.Journeys.FindAsync(id);
@@ -60,10 +60,30 @@ namespace Car_Rental_System_API.Controllers
             return journey;
         }
 
+        // GET: api/Journeys/65680537-130d-4469-83cb-5c407721f736
+        [HttpGet("{uuid:guid}")]
+        public async Task<ActionResult<Journey>> GetJourney(Guid uuid)
+        {
+            var journey = await _context.Journeys.SingleOrDefaultAsync(j => j.Uuid == uuid);
+
+            if (journey == null)
+            {
+                return NotFound();
+            }
+
+            var associatedBooking = await _context.Bookings.SingleOrDefaultAsync(b => b.Uuid == journey.BookingUuid);
+            var associatedVehicle = await _context.Vehicles.SingleOrDefaultAsync(v => v.Uuid == journey.VehicleUuid);
+
+            journey.Vehicle = associatedVehicle;
+            journey.Booking = associatedBooking;
+
+            return Ok(journey);
+        }
+
         // PUT: api/Journeys/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        [HttpPut("{id}")]
+        [HttpPut("{id:long}")]
         public async Task<IActionResult> PutJourney(ulong id, Journey journey)
         {
             if (id != journey.Id)
@@ -98,6 +118,15 @@ namespace Car_Rental_System_API.Controllers
         [HttpPost]
         public async Task<ActionResult<Journey>> PostJourney(Journey journey)
         {
+            var associatedVehicle = await _context.Vehicles.SingleOrDefaultAsync(v => v.Uuid == journey.VehicleUuid);
+            var associatedBooking = await _context.Bookings.SingleOrDefaultAsync(b => b.Uuid == journey.BookingUuid);
+
+            journey.Vehicle = associatedVehicle;
+            journey.Booking = associatedBooking;
+
+            journey.VehicleId = associatedVehicle.Id;
+            journey.BookingId = associatedBooking.Id;
+
             _context.Journeys.Add(journey);
             await _context.SaveChangesAsync();
 
@@ -120,9 +149,31 @@ namespace Car_Rental_System_API.Controllers
             return journey;
         }
 
+        // DELETE: api/Journeys/65680537-130d-4469-83cb-5c407721f736
+        [HttpDelete("{uuid:guid}")]
+        public async Task<ActionResult<Journey>> DeleteJourney(Guid uuid)
+        {
+            var journey = await _context.Journeys.SingleOrDefaultAsync(j => j.Uuid == uuid);
+
+            if (journey == null)
+            {
+                return NotFound();
+            }
+
+            _context.Journeys.Remove(journey);
+            await _context.SaveChangesAsync();
+
+            return journey;
+        }
+
         private bool JourneyExists(ulong id)
         {
             return _context.Journeys.Any(e => e.Id == id);
+        }
+
+        private bool JourneyExists(Guid uuid)
+        {
+            return _context.Journeys.Any(j => j.Uuid == uuid);
         }
     }
 }

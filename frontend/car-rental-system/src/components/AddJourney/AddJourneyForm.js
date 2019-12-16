@@ -27,34 +27,34 @@ export const AddJourneyForm = () => {
   const [addJourney, setAddJourney] = useState(false);
   const {bookingID} = useParams();
   const history = useHistory();
-  const vehicleToBeModified = vehicles.find(v => v.bookings.some(b => b.id === bookingID));
+  const vehicleToBeModified = vehicles.find(v => v.bookings.some(b => b.uuid === bookingID));
   const vehicle = cloneDeep(vehicleToBeModified);
-  const booking = vehicle ? vehicle.bookings.find(b => b.id === bookingID) : null;
+  const booking = vehicle ? vehicle.bookings.find(b => b.uuid === bookingID) : null;
   const associatedBooking = cloneDeep(booking);
 
   // Defines a schema for the form to add a new journey
   const schema = yup.object().shape({
-	journeyStartOdometerReading: yup
+	startOdometer: yup
 	  .number()
 	  .min(associatedBooking ? associatedBooking.startOdometer : 0, 'Invalid odometer reading')
 	  .required('This field is required'),
-	journeyEndOdometerReading: yup
+	endOdometer: yup
 	  .number()
 	  .min(associatedBooking ? associatedBooking.startOdometer : 0, 'Invalid odometer reading')
 	  .min(
-		yup.ref('journeyStartOdometerReading'),
+		yup.ref('startOdometer'),
 		'Cannot be lower than journey start odometer reading'
 	  )
 	  .required('This field is required'),
-	journeyStartedAt: yup
+	startedAt: yup
 	  .date()
-	  .min(associatedBooking ? moment(associatedBooking.startDate, 'YYYY-MM-DD') : moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'), 'Cannot be earlier than booking start date')
+	  .min(associatedBooking ? moment(associatedBooking.startedAt, 'YYYY-MM-DD') : moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'), 'Cannot be earlier than booking start date')
 	  .required('This field is required'),
-	journeyEndedAt: yup
+	endedAt: yup
 	  .date()
-	  .min(associatedBooking ? moment(associatedBooking.startDate, 'YYYY-MM-DD') : moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'), 'Cannot be earlier than booking start date')
-	  .min(yup.ref('journeyStartedAt'), 'Cannot be earlier than journey start date')
-	  .max(associatedBooking ? moment(associatedBooking.endDate, 'YYYY-MM-DD') : moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'), 'Cannot be later than booking end date')
+	  .min(associatedBooking ? moment(associatedBooking.startedAt, 'YYYY-MM-DD') : moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'), 'Cannot be earlier than booking start date')
+	  .min(yup.ref('startedAt'), 'Cannot be earlier than journey start date')
+	  .max(associatedBooking ? moment(associatedBooking.endedAt, 'YYYY-MM-DD') : moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'), 'Cannot be later than booking end date')
 	  .required('This field is required'),
 	journeyFrom: yup
 	  .string(),
@@ -67,9 +67,9 @@ export const AddJourneyForm = () => {
   useEffect(() => {
 	if (addJourney && journeyToBeAdded) {
 	  addResource('journey', journeyToBeAdded);
-	  history.push(`/show/${vehicle.id}`);
+	  history.push(`/show/${vehicle.uuid}`);
 	}
-  }, [addJourney, addResource, history, journeyToBeAdded, vehicle.id]);
+  }, [addJourney, addResource, history, journeyToBeAdded, vehicle.uuid]);
 
   return (
 	<Container>
@@ -86,7 +86,7 @@ export const AddJourneyForm = () => {
 		  <h2 className="text-center my-5">Add new journey
 			for {vehicle ? `${vehicle.manufacturer} ${vehicle.model} (${vehicle.year})` : ''},
 			booked
-			for: {associatedBooking ? `${moment(associatedBooking.startDate, 'YYYY-MM-DD').format('DD/MM/YYYY')}` : ''} - {associatedBooking ? `${moment(associatedBooking.endDate, 'YYYY-MM-DD').format('DD/MM/YYYY')}` : ''}</h2>
+			for: {associatedBooking ? `${moment(associatedBooking.startedAt, 'YYYY-MM-DD').format('DD/MM/YYYY')}` : ''} - {associatedBooking ? `${moment(associatedBooking.endedAt, 'YYYY-MM-DD').format('DD/MM/YYYY')}` : ''}</h2>
 		</Col>
 	  </Row>
 	  {
@@ -101,16 +101,16 @@ export const AddJourneyForm = () => {
 			<Formik
 			  validationSchema={schema}
 			  onSubmit={(values) => {
-				const {journeyStartOdometerReading, journeyEndOdometerReading, journeyStartedAt, journeyEndedAt, journeyFrom, journeyTo} = values;
-				const journey = new Journey(bookingID, journeyStartOdometerReading, journeyEndOdometerReading, journeyStartedAt, journeyEndedAt, journeyFrom, journeyTo);
+				const {startOdometer, endOdometer, startedAt, endedAt, journeyFrom, journeyTo} = values;
+				const journey = new Journey(bookingID, startOdometer, endOdometer, startedAt, endedAt, journeyFrom, journeyTo);
 				setJourneyToBeAdded(journey);
 				setAddJourney(true);
 			  }}
 			  initialValues={{
-				journeyStartOdometerReading: associatedBooking ? associatedBooking.startOdometer : 0,
-				journeyEndOdometerReading: associatedBooking ? associatedBooking.startOdometer : 0,
-				journeyStartedAt: associatedBooking ? moment(associatedBooking.startDate).format('YYYY-MM-DD') : moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'),
-				journeyEndedAt: associatedBooking ? moment(associatedBooking.startDate).format('YYYY-MM-DD') : moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'),
+				startOdometer: associatedBooking ? associatedBooking.startOdometer : 0,
+				endOdometer: associatedBooking ? associatedBooking.startOdometer : 0,
+				startedAt: associatedBooking ? moment(associatedBooking.startedAt).format('YYYY-MM-DD') : moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'),
+				endedAt: associatedBooking ? moment(associatedBooking.startedAt).format('YYYY-MM-DD') : moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'),
 				journeyFrom: '',
 				journeyTo: ''
 			  }}
@@ -127,73 +127,73 @@ export const AddJourneyForm = () => {
 				<Form
 				  onSubmit={handleSubmit}
 				>
-				  <Form.Group as={Row} controlId="journeyStartedAt">
+				  <Form.Group as={Row} controlId="startedAt">
 					<Form.Label column="true" sm="2">Journey started at:<span
 					  className="text-danger">*</span></Form.Label>
 					<Col sm="10">
 					  <Form.Control
 						onChange={handleChange}
-						name="journeyStartedAt"
-						value={values.journeyStartedAt}
+						name="startedAt"
+						value={values.startedAt}
 						type="date"
-						isValid={touched.journeyStartedAt && !errors.journeyStartedAt}
-						isInvalid={!!errors.journeyStartedAt}
+						isValid={touched.startedAt && !errors.startedAt}
+						isInvalid={!!errors.startedAt}
 					  />
 					  <Form.Control.Feedback type="invalid">
-						{errors.journeyStartedAt}
+						{errors.startedAt}
 					  </Form.Control.Feedback>
 					</Col>
 				  </Form.Group>
-				  <Form.Group as={Row} controlId="journeyEndedAt">
+				  <Form.Group as={Row} controlId="endedAt">
 					<Form.Label column="true" sm="2">Journey ended at:<span
 					  className="text-danger">*</span></Form.Label>
 					<Col sm="10">
 					  <Form.Control
 						onChange={handleChange}
-						name="journeyEndedAt"
-						value={values.journeyEndedAt}
+						name="endedAt"
+						value={values.endedAt}
 						type="date"
-						isValid={touched.journeyEndedAt && !errors.journeyEndedAt}
-						isInvalid={!!errors.journeyEndedAt}
+						isValid={touched.endedAt && !errors.endedAt}
+						isInvalid={!!errors.endedAt}
 					  />
 					  <Form.Control.Feedback type="invalid">
-						{errors.journeyEndedAt}
+						{errors.endedAt}
 					  </Form.Control.Feedback>
 					</Col>
 				  </Form.Group>
-				  <Form.Group as={Row} controlId="journeyStartOdometerReading">
+				  <Form.Group as={Row} controlId="startOdometer">
 					<Form.Label column="true" sm="2">Journey start odometer reading:<span
 					  className="text-danger">*</span></Form.Label>
 					<Col sm="10">
 					  <Form.Control
 						onChange={handleChange}
-						name="journeyStartOdometerReading"
-						value={values.journeyStartOdometerReading}
+						name="startOdometer"
+						value={values.startOdometer}
 						type="number"
 						placeholder="Journey start odometer reading..."
-						isValid={touched.journeyStartOdometerReading && !errors.journeyStartOdometerReading}
-						isInvalid={!!errors.journeyStartOdometerReading}
+						isValid={touched.startOdometer && !errors.startOdometer}
+						isInvalid={!!errors.startOdometer}
 					  />
 					  <Form.Control.Feedback type="invalid">
-						{errors.journeyStartOdometerReading}
+						{errors.startOdometer}
 					  </Form.Control.Feedback>
 					</Col>
 				  </Form.Group>
-				  <Form.Group as={Row} controlId="journeyEndOdometerReading">
+				  <Form.Group as={Row} controlId="endOdometer">
 					<Form.Label column="true" sm="2">Journey end odometer reading:<span
 					  className="text-danger">*</span></Form.Label>
 					<Col sm="10">
 					  <Form.Control
 						onChange={handleChange}
-						name="journeyEndOdometerReading"
-						value={values.journeyEndOdometerReading}
+						name="endOdometer"
+						value={values.endOdometer}
 						placeholder="Journey end odometer reading..."
 						type="number"
-						isValid={touched.journeyEndOdometerReading && !errors.journeyEndOdometerReading}
-						isInvalid={!!errors.journeyEndOdometerReading}
+						isValid={touched.endOdometer && !errors.endOdometer}
+						isInvalid={!!errors.endOdometer}
 					  />
 					  <Form.Control.Feedback type="invalid">
-						{errors.journeyEndOdometerReading}
+						{errors.endOdometer}
 					  </Form.Control.Feedback>
 					</Col>
 				  </Form.Group>
@@ -252,7 +252,7 @@ export const AddJourneyForm = () => {
 					<Button
 					  variant="danger"
 					  size="lg"
-					  onClick={() => history.push(`/show/${vehicle.id}`)}
+					  onClick={() => history.push(`/show/${vehicle.uuid}`)}
 					>
 					  Cancel
 					</Button>

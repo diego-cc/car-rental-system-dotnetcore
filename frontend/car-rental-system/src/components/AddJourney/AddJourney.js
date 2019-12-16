@@ -17,7 +17,7 @@ const cloneDeep = require('lodash.clonedeep');
 export const AddJourney = () => {
   const {vehicles} = useContext(AppContext);
   const {vehicleID} = useParams();
-  const vehicle = cloneDeep(vehicles.find(v => v.id === vehicleID));
+  const vehicle = cloneDeep(vehicles.find(v => v.uuid === vehicleID));
   const history = useHistory();
 
   return (
@@ -56,10 +56,10 @@ export const AddJourney = () => {
 						(
 						  vehicle
 							.bookings
-							.filter(booking => booking.vehicleID === vehicle.id)
+							.filter(booking => booking.vehicleUuid === vehicle.uuid)
 							.sort((booking1, booking2) => {
-							  const booking1StartDate = new Date(booking1.startDate);
-							  const booking2StartDate = new Date(booking2.startDate);
+							  const booking1StartDate = new Date(booking1.startedAt);
+							  const booking2StartDate = new Date(booking2.startedAt);
 
 							  if (booking1StartDate > booking2StartDate) {
 								return -1;
@@ -70,7 +70,7 @@ export const AddJourney = () => {
 							})
 							.map((booking, index) => (
 							  <Card
-								data-testid={`booking-${booking.id}`}
+								data-testid={`booking-${booking.uuid}`}
 								key={index}
 								style={{overflow: 'visible'}}
 							  >
@@ -80,9 +80,9 @@ export const AddJourney = () => {
 									as={Button}
 									variant="link"
 									eventKey={index}>
-									{`${new Date(booking.startDate).toLocaleDateString('en-AU')}`}
+									{`${new Date(booking.startedAt).toLocaleDateString('en-AU')}`}
 								  </Accordion.Toggle>
-								  <Link to={`/addJourneyForm/${booking.id}`}>
+								  <Link to={`/addJourneyForm/${booking.uuid}`}>
 									<Button variant="outline-success">
 									  <FontAwesomeIcon icon={faPlus}/>
 									</Button>
@@ -93,18 +93,18 @@ export const AddJourney = () => {
 									<ListGroup>
 									  <ListGroup.Item>
 										Start
-										Date: {`${new Date(booking.startDate).toLocaleDateString('en-AU')}`}
+										Date: {`${new Date(booking.startedAt).toLocaleDateString('en-AU')}`}
 									  </ListGroup.Item>
 									  <ListGroup.Item>
 										End
-										Date: {`${new Date(booking.endDate).toLocaleDateString('en-AU')}`}
+										Date: {`${new Date(booking.endedAt).toLocaleDateString('en-AU')}`}
 									  </ListGroup.Item>
 									  <ListGroup.Item>
 										Start Odometer: {booking.startOdometer} km
 									  </ListGroup.Item>
 									  <ListGroup.Item>
 										Booking
-										Type: {booking.bookingType === 'D' ? 'Per day' : 'Per km'}
+										Type: {booking.type === 'D' ? 'Per day' : 'Per km'}
 									  </ListGroup.Item>
 									</ListGroup>
 								  </Card.Body>
@@ -126,7 +126,7 @@ export const AddJourney = () => {
 			  }}
 			  variant="danger"
 			  size="lg"
-			  onClick={() => history.push(`/show/${vehicle.id}`)}
+			  onClick={() => history.push(`/show/${vehicle.uuid}`)}
 			>
 			  Cancel
 			</Button>

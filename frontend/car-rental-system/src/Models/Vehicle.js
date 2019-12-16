@@ -98,6 +98,7 @@ export class Vehicle {
    */
   addJourney(newJourney) {
 	this.bookings.find(b => b.uuid === newJourney.bookingUuid).addJourney(newJourney);
+	this.journeys.push(newJourney);
 	this.updateVehicleOdometer(null, false);
   }
 
@@ -126,6 +127,7 @@ export class Vehicle {
    */
   addFuelPurchase(newFuelPurchase) {
 	this.bookings.find(b => b.uuid === newFuelPurchase.bookingUuid).addFuelPurchase(newFuelPurchase);
+	this.fuelPurchases.push(newFuelPurchase);
   }
 
   /**

@@ -187,6 +187,7 @@ export class App extends React.Component {
 			case 'journeys':
 			case 'fuelPurchases':
 			  selectedVehicle = vehicles.find(v => v.bookings.some(b => b.uuid === resource.bookingUuid));
+			  resource._vehicleUuid = selectedVehicle.uuid;
 			  selectedVehicleIndex = vehicles.findIndex(v => v.bookings.some(b => b.uuid === resource.bookingUuid));
 			  if (collectionName === 'journeys') {
 				selectedVehicle.addJourney(resource);
