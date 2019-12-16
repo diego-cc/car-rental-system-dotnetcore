@@ -33,11 +33,11 @@ export const DeleteResourceModal = () => {
 			  <ListGroup.Item>Model: {resource ? resource.model : ''}</ListGroup.Item>
 			  <ListGroup.Item>Year: {resource ? resource.year : ''}</ListGroup.Item>
 			  <ListGroup.Item>Registration
-				number: {resource ? resource.registrationNumber : ''}</ListGroup.Item>
+				number: {resource ? resource.registration : ''}</ListGroup.Item>
 			  <ListGroup.Item>Odometer
-				reading: {resource ? resource.odometerReading : 0} km</ListGroup.Item>
+				reading: {resource ? resource.odometer : 0} km</ListGroup.Item>
 			  <ListGroup.Item>Tank
-				capacity: {resource ? resource.tankCapacity : 0} L</ListGroup.Item>
+				capacity: {resource ? resource.tankSize : 0} L</ListGroup.Item>
 			</ListGroup>
 		  );
 
@@ -46,21 +46,21 @@ export const DeleteResourceModal = () => {
 			<ListGroup>
 			  <ListGroup.Item>
 				Journey
-				vehicle: {resource && vehicles.find(v => v.bookings.some(b => b.journeys.some(j => j.id === resource.id))) ? `${vehicles.find(v => v.bookings.some(b => b.journeys.some(j => j.id === resource.id))).manufacturer} ${vehicles.find(v => v.bookings.some(b => b.journeys.some(j => j.id === resource.id))).model} (${vehicles.find(v => v.bookings.some(b => b.journeys.some(j => j.id === resource.id))).year})` : ''}
+				vehicle: {resource && vehicles.find(v => v.bookings.some(b => b.journeys.some(j => j.uuid === resource.uuid))) ? `${vehicles.find(v => v.bookings.some(b => b.journeys.some(j => j.uuid === resource.uuid))).manufacturer} ${vehicles.find(v => v.bookings.some(b => b.journeys.some(j => j.uuid === resource.uuid))).model} (${vehicles.find(v => v.bookings.some(b => b.journeys.some(j => j.uuid === resource.uuid))).year})` : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
-				Journey start date: {resource ? moment(resource.journeyStartedAt).format('DD/MM/YYYY') : ''}
+				Journey start date: {resource ? moment(resource.startedAt).format('DD/MM/YYYY') : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
-				Journey end date: {resource ? moment(resource.journeyEndedAt).format('DD/MM/YYYY') : ''}
+				Journey end date: {resource ? moment(resource.endedAt).format('DD/MM/YYYY') : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
 				Journey start odometer
-				reading: {resource ? `${resource.journeyStartOdometerReading} km` : ''}
+				reading: {resource ? `${resource.startOdometer} km` : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
 				Journey end odometer
-				reading: {resource ? `${resource.journeyEndOdometerReading} km` : ''}
+				reading: {resource ? `${resource.endOdometer} km` : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
 				Journey from: {resource ? resource.journeyFrom : ''}
@@ -76,24 +76,24 @@ export const DeleteResourceModal = () => {
 			<ListGroup>
 			  <ListGroup.Item>
 				Booking
-				vehicle: {resource ? `${vehicles.find(v => v.id === resource.vehicleID).manufacturer} ${vehicles.find(v => v.id === resource.vehicleID).model} (${vehicles.find(v => v.id === resource.vehicleID).year})` : ''}
+				vehicle: {resource ? `${vehicles.find(v => v.uuid === resource.vehicleUuid).manufacturer} ${vehicles.find(v => v.uuid === resource.vehicleUuid).model} (${vehicles.find(v => v.uuid === resource.vehicleUuid).year})` : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
-				Booking start date: {resource ? moment(resource.startDate).format('DD/MM/YYYY') : ''}
+				Booking start date: {resource ? moment(resource.startedAt).format('DD/MM/YYYY') : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
-				Booking end date: {resource ? moment(resource.endDate).format('DD/MM/YYYY') : ''}
+				Booking end date: {resource ? moment(resource.endedAt).format('DD/MM/YYYY') : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
 				Booking start odometer reading: {resource ? `${resource.startOdometer} km` : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
-				Booking type: {resource ? resource.bookingType === 'K' ? 'Per kilometer' : 'Per' +
+				Booking type: {resource ? resource.type === 'K' ? 'Per kilometer' : 'Per' +
 				' day' : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
 				Booking cost: {
-			    `$ ${Number.parseFloat(resource.bookingCost).toFixed(2)}`
+			    `$ ${Number.parseFloat(resource.cost).toFixed(2)}`
 			  }
 			  </ListGroup.Item>
 			</ListGroup>
@@ -104,13 +104,13 @@ export const DeleteResourceModal = () => {
 			<ListGroup>
 			  <ListGroup.Item>
 				Service
-				vehicle: {resource && vehicles.some(v => v.id === resource.vehicleID) ? `${vehicles.find(v => v.id === resource.vehicleID).manufacturer} ${vehicles.find(v => v.id === resource.vehicleID).model} (${vehicles.find(v => v.id === resource.vehicleID).year})` : ''}
+				vehicle: {resource && vehicles.some(v => v.uuid === resource.vehicleUuid) ? `${vehicles.find(v => v.uuid === resource.vehicleUuid).manufacturer} ${vehicles.find(v => v.uuid === resource.vehicleUuid).model} (${vehicles.find(v => v.uuid === resource.vehicleUuid).year})` : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
 				Serviced at: {resource ? moment(resource.servicedAt).format('DD/MM/YYYY') : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
-				Service odometer reading: {resource ? `${resource.serviceOdometer} km` : ''}
+				Service odometer reading: {resource ? `${resource.servicedAt} km` : ''}
 			  </ListGroup.Item>
 			</ListGroup>
 		  );
@@ -121,7 +121,7 @@ export const DeleteResourceModal = () => {
 			<ListGroup>
 			  <ListGroup.Item>
 				Fuel purchased for
-				vehicle: {resource && vehicles.find(v => v.bookings.some(b => b.fuelPurchases.some(f => f.id === resource.id))) ? `${vehicles.find(v => v.bookings.some(b => b.fuelPurchases.some(f => f.id === resource.id))).manufacturer} ${vehicles.find(v => v.bookings.some(b => b.fuelPurchases.some(f => f.id === resource.id))).model} (${vehicles.find(v => v.bookings.some(b => b.fuelPurchases.some(f => f.id === resource.id))).year})` : ''}
+				vehicle: {resource && vehicles.find(v => v.bookings.some(b => b.fuelPurchases.some(f => f.uuid === resource.uuid))) ? `${vehicles.find(v => v.bookings.some(b => b.fuelPurchases.some(f => f.uuid === resource.uuid))).manufacturer} ${vehicles.find(v => v.bookings.some(b => b.fuelPurchases.some(f => f.uuid === resource.uuid))).model} (${vehicles.find(v => v.bookings.some(b => b.fuelPurchases.some(f => f.uuid === resource.uuid))).year})` : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
 				Fuel quantity: {resource ? `${resource.fuelQuantity} L` : ''}

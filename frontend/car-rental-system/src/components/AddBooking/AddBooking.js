@@ -30,26 +30,26 @@ export const AddBooking = () => {
   const [addBooking, setAddBooking] = useState(false);
   const {vehicleID} = useParams();
   const history = useHistory();
-  const vehicleToBeModified = vehicles.find(v => v.id === vehicleID);
+  const vehicleToBeModified = vehicles.find(v => v.uuid === vehicleID);
   const vehicle = cloneDeep(vehicleToBeModified);
 
   // Defines a schema for the AddBooking form
   const schema = yup.object().shape({
-	bookingType: yup.string().required('This field is required'),
-	startDate: yup
+	type: yup.string().required('This field is required'),
+	startedAt: yup
 	  .date()
 	  .min(moment().subtract(1, 'day'), 'Start date cannot be earlier than today')
 	  .max(moment(moment(), 'YYYY-MM-DD').add(1, 'year'), 'Invalid date')
 	  .required('This field is required'),
-	endDate: yup
+	endedAt: yup
 	  .date()
 	  .min(moment().subtract(1, 'day'), 'Invalid date')
-	  .min(yup.ref('startDate'), 'End date cannot be earlier start date')
+	  .min(yup.ref('startedAt'), 'End date cannot be earlier start date')
 	  .max(moment(moment(), 'YYYY-MM-DD').add(1, 'year'), 'Invalid date')
 	  .required('This field is required'),
 	startOdometer: yup
 	  .number()
-	  .min(vehicle ? vehicle.odometerReading : 0, 'Cannot be lower than current odometer reading')
+	  .min(vehicle ? vehicle.odometer : 0, 'Cannot be lower than current odometer reading')
 	  .required('This field is required')
   });
 
@@ -59,7 +59,7 @@ export const AddBooking = () => {
 	deleteResource.confirmDeleteResource(conflictedResourceType, conflictedResource);
 	deleteResource.setDeleteResourceModalShow(null, null, () => {
 	  addResource(newResourceType, newResource);
-	  history.push(`/show/${vehicle.id}`);
+	  history.push(`/show/${vehicle.uuid}`);
 	});
   };
 
@@ -68,9 +68,9 @@ export const AddBooking = () => {
   useEffect(() => {
 	if (addBooking && bookingToBeAdded) {
 	  addResource('booking', bookingToBeAdded);
-	  history.push(`/show/${vehicle.id}`);
+	  history.push(`/show/${vehicle.uuid}`);
 	}
-  }, [addBooking, addResource, bookingToBeAdded, history, vehicle.id]);
+  }, [addBooking, addResource, bookingToBeAdded, history, vehicle.uuid]);
 
   return (
 	<Container>
@@ -89,19 +89,19 @@ export const AddBooking = () => {
 		</Col>
 	  </Row>
 	  <WarningModal
-		onHide={() => setBookingConflict({status: false})}
+		onHide={() => setBookingConflict(prevState => ({status: false, booking: prevState.booking}))}
 		show={bookingConflict.status}
 		header="Booking conflict"
-		body={`New booking could not be added to the system, because there is another booking scheduled between ${bookingConflict.booking ? moment(bookingConflict.booking.startDate, 'YYYY-MM-DD').format('DD/MM/YYYY') : ''} and ${bookingConflict.booking ? moment(bookingConflict.booking.endDate, 'YYYY-MM-DD').format('DD/MM/YYYY') : ''}. Would you like to cancel the other booking and add this one now?`}
+		body={`New booking could not be added to the system, because there is another booking scheduled between ${bookingConflict.booking ? moment(bookingConflict.booking.startedAt, 'YYYY-MM-DD').format('DD/MM/YYYY') : ''} and ${bookingConflict.booking ? moment(bookingConflict.booking.endedAt, 'YYYY-MM-DD').format('DD/MM/YYYY') : ''}. Would you like to cancel the other booking and add this one now?`}
 		accept="Yes, cancel the other booking"
 		cancel="No, keep it as it is"
 		acceptHandler={() => {
 		  confirmDeleteConflictedResource('booking', bookingConflict.booking, 'booking', bookingToBeAdded);
 		}}
-		cancelHandler={() => setBookingConflict({status: false})}
+		cancelHandler={() => setBookingConflict(prevState => ({status: false, booking: prevState.booking}))}
 	  />
 	  <WarningModal
-		onHide={() => setServiceConflict({status: false})}
+		onHide={() => setServiceConflict(prevState => ({status: false, service: prevState.service}))}
 		show={serviceConflict.status}
 		header="Service conflict"
 		body={`New booking could not be added to the system, because there is a service scheduled for ${serviceConflict.service ? moment(serviceConflict.service.servicedAt, 'YYYY-MM-DD').format('DD/MM/YYYY') : ''}. Would you like to cancel that service and add this booking?`}
@@ -110,7 +110,7 @@ export const AddBooking = () => {
 		acceptHandler={() => {
 		  confirmDeleteConflictedResource('service', serviceConflict.service, 'booking', bookingToBeAdded);
 		}}
-		cancelHandler={() => setServiceConflict({status: false})}
+		cancelHandler={() => setServiceConflict(prevState => ({status: false, service: prevState.service}))}
 	  />
 	  {
 		loading ?
@@ -123,39 +123,42 @@ export const AddBooking = () => {
 		  (
 			<Formik
 			  validationSchema={schema}
-			  onSubmit={(values) => {
-				const {bookingType, startDate, endDate, startOdometer} = values;
-				const booking = new Booking(vehicle.id, bookingType, startDate, endDate, startOdometer);
+			  onSubmit={(values, actions) => {
+				const {type, startedAt, endedAt, startOdometer} = values;
+				const booking = new Booking(vehicle.uuid, type, startedAt, endedAt, startOdometer);
 				setBookingToBeAdded(booking);
 
 				// check booking conflicts
 				if (vehicle.bookings.some(b => {
-				  return moment.range(moment(b.startDate, 'YYYY-MM-DD'), moment(b.endDate, 'YYYY-MM-DD')).overlaps(moment.range(moment(startDate, 'YYYY-MM-DD'), moment(endDate, 'YYYY-MM-DD')))
+				  return moment.range(moment(b.startedAt, 'YYYY-MM-DD'), moment(b.endedAt, 'YYYY-MM-DD')).overlaps(moment.range(moment(startedAt, 'YYYY-MM-DD'), moment(endedAt, 'YYYY-MM-DD')))
 				})) {
-				  const bookingConflict = vehicle.bookings.find(b => moment.range(moment(b.startDate, 'YYYY-MM-DD'), moment(b.endDate, 'YYYY-MM-DD')).overlaps(moment.range(moment(startDate, 'YYYY-MM-DD'), moment(endDate, 'YYYY-MM-DD'))));
+				  const bookingConflict = vehicle.bookings.find(b => moment.range(moment(b.startedAt, 'YYYY-MM-DD'), moment(b.endedAt, 'YYYY-MM-DD')).overlaps(moment.range(moment(startedAt, 'YYYY-MM-DD'), moment(endedAt, 'YYYY-MM-DD'))));
 				  setBookingConflict({
 					status: true,
 					booking: bookingConflict
 				  });
+				  actions.setSubmitting(false);
 				}
 				// check service conflicts
-				else if (vehicle.services.some(s => moment(s.servicedAt, 'YYYY-MM-DD').within(moment.range(moment(startDate, 'YYYY-MM-DD'), moment(endDate, 'YYYY-MM-DD'))))) {
+				else if (vehicle.services.some(s => moment(s.servicedAt, 'YYYY-MM-DD').within(moment.range(moment(startedAt, 'YYYY-MM-DD'), moment(endedAt, 'YYYY-MM-DD'))))) {
 
-				  const serviceConflict = vehicle.services.find(s => moment(s.servicedAt, 'YYYY-MM-DD').within(moment.range(moment(startDate, 'YYYY-MM-DD'), moment(endDate, 'YYYY-MM-DD'))));
+				  const serviceConflict = vehicle.services.find(s => moment(s.servicedAt, 'YYYY-MM-DD').within(moment.range(moment(startedAt, 'YYYY-MM-DD'), moment(endedAt, 'YYYY-MM-DD'))));
 				  setServiceConflict({
 					status: true,
 					service: serviceConflict
 				  });
+				  actions.setSubmitting(false);
 				} else {
 				  // All good, add new booking
 				  setAddBooking(true);
+				  actions.setSubmitting(true);
 				}
 			  }}
 			  initialValues={{
-				bookingType: 'D',
-				startDate: moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'),
-				endDate: moment(moment(), 'YYYY-MM-DD').add(1, 'day').format('YYYY-MM-DD'),
-				startOdometer: vehicle ? vehicle.odometerReading : 0
+				type: 'D',
+				startedAt: moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'),
+				endedAt: moment(moment(), 'YYYY-MM-DD').add(1, 'day').format('YYYY-MM-DD'),
+				startOdometer: vehicle ? vehicle.odometer : 0
 			  }}
 			>
 			  {({
@@ -170,17 +173,17 @@ export const AddBooking = () => {
 				<Form
 				  onSubmit={handleSubmit}
 				>
-				  <Form.Group as={Row} controlId="bookingType">
+				  <Form.Group as={Row} controlId="type">
 					<Form.Label column="true" sm="2">Booking Type:<span
 					  className="text-danger">*</span></Form.Label>
 					<Col sm="10">
 					  <Form.Control
 						as="select"
-						name="bookingType"
-						value={values.bookingType}
+						name="type"
+						value={values.type}
 						onChange={handleChange}
-						isValid={touched.bookingType && !errors.bookingType}
-						isInvalid={!!errors.bookingType}
+						isValid={touched.type && !errors.type}
+						isInvalid={!!errors.type}
 					  >
 						<option
 						  value="D">
@@ -192,41 +195,41 @@ export const AddBooking = () => {
 						</option>
 					  </Form.Control>
 					  <Form.Control.Feedback type="invalid">
-						{errors.bookingType}
+						{errors.type}
 					  </Form.Control.Feedback>
 					</Col>
 				  </Form.Group>
-				  <Form.Group as={Row} controlId="startDate">
+				  <Form.Group as={Row} controlId="startedAt">
 					<Form.Label column="true" sm="2">Start Date:<span
 					  className="text-danger">*</span></Form.Label>
 					<Col sm="10">
 					  <Form.Control
 						onChange={handleChange}
-						name="startDate"
-						value={values.startDate}
+						name="startedAt"
+						value={values.startedAt}
 						type="date"
-						isInvalid={!!errors.startDate}
-						isValid={touched.startDate && !errors.startDate}
+						isInvalid={!!errors.startedAt}
+						isValid={touched.startedAt && !errors.startedAt}
 					  />
 					  <Form.Control.Feedback type="invalid">
-						{errors.startDate}
+						{errors.startedAt}
 					  </Form.Control.Feedback>
 					</Col>
 				  </Form.Group>
-				  <Form.Group as={Row} controlId="endDate">
+				  <Form.Group as={Row} controlId="endedAt">
 					<Form.Label column="true" sm="2">End Date:<span
 					  className="text-danger">*</span></Form.Label>
 					<Col sm="10">
 					  <Form.Control
 						onChange={handleChange}
-						name="endDate"
-						value={values.endDate}
+						name="endedAt"
+						value={values.endedAt}
 						type="date"
-						isInvalid={!!errors.endDate}
-						isValid={touched.endDate && !errors.endDate}
+						isInvalid={!!errors.endedAt}
+						isValid={touched.endedAt && !errors.endedAt}
 					  />
 					  <Form.Control.Feedback type="invalid">
-						{errors.endDate}
+						{errors.endedAt}
 					  </Form.Control.Feedback>
 					</Col>
 				  </Form.Group>

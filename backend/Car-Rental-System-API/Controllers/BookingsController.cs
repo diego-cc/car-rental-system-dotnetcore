@@ -111,8 +111,16 @@ namespace Car_Rental_System_API.Controllers
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
         [HttpPost]
-        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
+        public async Task<ActionResult<Booking>> PostBooking([FromBody]Booking booking)
         {
+            var associatedVehicle = await _context.Vehicles.SingleOrDefaultAsync(v => v.Uuid == booking.VehicleUuid);
+
+            if (associatedVehicle != null)
+            {
+                booking.Vehicle = associatedVehicle;
+                booking.VehicleId = associatedVehicle.Id;
+            }
+
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
