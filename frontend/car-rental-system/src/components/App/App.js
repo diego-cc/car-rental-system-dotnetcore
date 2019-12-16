@@ -216,6 +216,7 @@ export class App extends React.Component {
 	  }, () => {
 		if (collectionName && collection) {
 		  if (updateRemote) {
+		    console.log(resource);
 			const payload = {};
 			Object.keys(resource).forEach(k => {
 			  if (resource.hasOwnProperty(k)) {

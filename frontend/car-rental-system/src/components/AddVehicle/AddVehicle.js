@@ -20,8 +20,8 @@ export const AddVehicle = () => {
 	<VehicleForm
 	  type="add"
 	  handleSubmit={values => {
-		const {manufacturer, model, year, odometerReading, registrationNumber, tankCapacity} = values;
-		const vehicleToBeAdded = new Vehicle(manufacturer, model, year, odometerReading, registrationNumber, tankCapacity);
+		const {manufacturer, model, year, odometer, registration, tankSize} = values;
+		const vehicleToBeAdded = new Vehicle(manufacturer, model, year, odometer, registration, tankSize);
 
 		addResource('vehicle', vehicleToBeAdded);
 		history.push(`/show/${vehicleToBeAdded.uuid}`);

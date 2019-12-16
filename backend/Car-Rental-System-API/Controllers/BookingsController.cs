@@ -41,7 +41,7 @@ namespace Car_Rental_System_API.Controllers
         }
 
         // GET: api/Bookings/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:long}")]
         public async Task<ActionResult<Booking>> GetBooking(ulong id)
         {
             var booking = await _context.Bookings.FindAsync(id);
@@ -50,6 +50,27 @@ namespace Car_Rental_System_API.Controllers
             {
                 return NotFound();
             }
+
+            return booking;
+        }
+
+        // GET: api/Bookings/65680537-130d-4469-83cb-5c407721f736
+        [HttpGet("{uuid:guid}")]
+        public async Task<ActionResult<Booking>> GetBooking(Guid uuid)
+        {
+            var booking = await _context.Bookings.SingleOrDefaultAsync(b => b.Uuid == uuid);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            var correspondingJourneys = await _context.Journeys.Where(j => j.BookingUuid == uuid).ToListAsync();
+
+            var correspondingFuelPurchases = await _context.FuelPurchases.Where(f => f.BookingUuid == uuid).ToListAsync();
+
+            booking.Journeys = correspondingJourneys;
+            booking.FuelPurchases = correspondingFuelPurchases;
 
             return booking;
         }
@@ -95,11 +116,11 @@ namespace Car_Rental_System_API.Controllers
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBooking", new { id = booking.Id }, booking);
+            return CreatedAtAction(nameof(GetBooking), new { uuid = booking.Uuid }, booking);
         }
 
         // DELETE: api/Bookings/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:long}")]
         public async Task<ActionResult<Booking>> DeleteBooking(ulong id)
         {
             var booking = await _context.Bookings.FindAsync(id);
@@ -114,9 +135,30 @@ namespace Car_Rental_System_API.Controllers
             return booking;
         }
 
+        // DELETE: api/Bookings/65680537-130d-4469-83cb-5c407721f736
+        [HttpDelete("{uuid:guid}")]
+        public async Task<ActionResult<Booking>> DeleteBooking(Guid uuid)
+        {
+            var booking = await _context.Bookings.SingleOrDefaultAsync(b => b.Uuid == uuid);
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            _context.Bookings.Remove(booking);
+            await _context.SaveChangesAsync();
+
+            return booking;
+        }
+
         private bool BookingExists(ulong id)
         {
             return _context.Bookings.Any(e => e.Id == id);
+        }
+
+        private bool BookingExists(Guid uuid)
+        {
+            return _context.Bookings.Any(b => b.Uuid == uuid);
         }
     }
 }

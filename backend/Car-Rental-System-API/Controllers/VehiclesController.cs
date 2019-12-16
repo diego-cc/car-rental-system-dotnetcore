@@ -139,7 +139,6 @@ namespace Car_Rental_System_API.Controllers
         [HttpPost]
         public async Task<ActionResult<Vehicle>> PostVehicle(Vehicle vehicle)
         {
-            Console.WriteLine(vehicle);
             _context.Vehicles.Add(vehicle);
             await _context.SaveChangesAsync();
 
