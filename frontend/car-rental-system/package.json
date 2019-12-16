@@ -1,6 +1,6 @@
 {
   "name": "car-rental-system",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "private": true,
   "proxy": "https://localhost:5001/",
   "dependencies": {
