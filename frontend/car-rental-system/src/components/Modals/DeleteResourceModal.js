@@ -110,7 +110,7 @@ export const DeleteResourceModal = () => {
 				Serviced at: {resource ? moment(resource.servicedAt).format('DD/MM/YYYY') : ''}
 			  </ListGroup.Item>
 			  <ListGroup.Item>
-				Service odometer reading: {resource ? `${resource.servicedAt} km` : ''}
+				Service odometer reading: {resource ? `${resource.odometer} km` : ''}
 			  </ListGroup.Item>
 			</ListGroup>
 		  );

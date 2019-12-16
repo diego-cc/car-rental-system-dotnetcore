@@ -30,7 +30,7 @@ export const AddService = () => {
   const [addService, setAddService] = useState(false);
   const {vehicleID} = useParams();
   const history = useHistory();
-  const vehicleToBeModified = vehicles.find(v => v.id === vehicleID);
+  const vehicleToBeModified = vehicles.find(v => v.uuid === vehicleID);
   const vehicle = cloneDeep(vehicleToBeModified);
 
   // Deletes a resource from both the context and firebase,
@@ -39,7 +39,7 @@ export const AddService = () => {
 	deleteResource.confirmDeleteResource(conflictedResourceType, conflictedResource);
 	deleteResource.setDeleteResourceModalShow(null, null, () => {
 	  addResource(newResourceType, newResource);
-	  history.push(`/show/${vehicle.id}`);
+	  history.push(`/show/${vehicle.uuid}`);
 	});
   };
 
@@ -49,9 +49,9 @@ export const AddService = () => {
 	  .date()
 	  .min(moment().subtract(1, 'day'), 'Invalid date')
 	  .required('This field is required'),
-	serviceOdometer: yup
+	odometer: yup
 	  .number()
-	  .min(vehicle ? vehicle.odometerReading : 0,
+	  .min(vehicle ? vehicle.odometer : 0,
 		'Invalid service odometer')
 	  .required('This field is required')
   });
@@ -61,9 +61,9 @@ export const AddService = () => {
   useEffect(() => {
 	if (addService && serviceToBeAdded) {
 	  addResource('service', serviceToBeAdded);
-	  history.push(`/show/${vehicle.id}`);
+	  history.push(`/show/${vehicle.uuid}`);
 	}
-  }, [addService, addResource, history, serviceToBeAdded, vehicle.id]);
+  }, [addService, addResource, history, serviceToBeAdded, vehicle.uuid]);
 
   return (
 	<Container>
@@ -82,19 +82,19 @@ export const AddService = () => {
 		</Col>
 	  </Row>
 	  <WarningModal
-		onHide={() => setBookingConflict({status: false})}
+		onHide={() => setBookingConflict(prevState => ({status: false, booking: prevState.booking}))}
 		show={bookingConflict.status}
 		header="Booking conflict"
-		body={`New service could not be added to the system, because there is a booking scheduled between ${bookingConflict.booking ? moment(bookingConflict.booking.startDate, 'YYYY-MM-DD').format('DD/MM/YYYY') : ''} and ${bookingConflict.booking ? moment(bookingConflict.booking.endDate, 'YYYY-MM-DD').format('DD/MM/YYYY') : ''}. Would you like to cancel the booking and add this service now?`}
+		body={`New service could not be added to the system, because there is a booking scheduled between ${bookingConflict.booking ? moment(bookingConflict.booking.startedAt, 'YYYY-MM-DD').format('DD/MM/YYYY') : ''} and ${bookingConflict.booking ? moment(bookingConflict.booking.endedAt, 'YYYY-MM-DD').format('DD/MM/YYYY') : ''}. Would you like to cancel the booking and add this service now?`}
 		accept="Yes, cancel this booking"
 		cancel="No, keep it as it is"
 		acceptHandler={() => {
 		  confirmDeleteConflictedResource('booking', bookingConflict.booking, 'service', serviceToBeAdded);
 		}}
-		cancelHandler={() => setBookingConflict({status: false})}
+		cancelHandler={() => setBookingConflict(prevState => ({status: false, booking: prevState.booking}))}
 	  />
 	  <WarningModal
-		onHide={() => setServiceConflict({status: false})}
+		onHide={() => setServiceConflict(prevState => ({status: false, service: prevState.service}))}
 		show={serviceConflict.status}
 		header="Service conflict"
 		body={`New service could not be added to the system, because there is another service also scheduled for ${serviceConflict.service ? moment(serviceConflict.service.servicedAt, 'YYYY-MM-DD').format('DD/MM/YYYY') : ''}. Would you like to cancel that service and add this one instead?`}
@@ -103,7 +103,7 @@ export const AddService = () => {
 		acceptHandler={() => {
 		  confirmDeleteConflictedResource('service', serviceConflict.service, 'service', serviceToBeAdded);
 		}}
-		cancelHandler={() => setServiceConflict({status: false})}
+		cancelHandler={() => setServiceConflict(prevState => ({status: false, service: prevState.service}))}
 	  />
 	  {
 		loading ?
@@ -116,18 +116,19 @@ export const AddService = () => {
 		  (
 			<Formik
 			  validationSchema={schema}
-			  onSubmit={(values) => {
-				const {serviceOdometer, servicedAt} = values;
-				const service = new Service(vehicle.id, serviceOdometer, servicedAt);
+			  onSubmit={(values, actions) => {
+				const {odometer, servicedAt} = values;
+				const service = new Service(vehicle.uuid, odometer, servicedAt);
 				setServiceToBeAdded(service);
 
 				// check booking conflicts
-				if (vehicle.bookings.some(b => moment(servicedAt, 'YYYY-MM-DD').within(moment.range(b.startDate, b.endDate)))) {
-				  const bookingConflict = vehicle.bookings.find(b => moment(servicedAt, 'YYYY-MM-DD').within(moment.range(b.startDate, b.endDate)));
+				if (vehicle.bookings.some(b => moment(servicedAt, 'YYYY-MM-DD').within(moment.range(moment(b.startedAt), moment(b.endedAt))))) {
+				  const bookingConflict = vehicle.bookings.find(b => moment(servicedAt, 'YYYY-MM-DD').within(moment.range(moment(b.startedAt), moment(b.endedAt))));
 				  setBookingConflict({
 					status: true,
 					booking: bookingConflict
 				  });
+				  actions.setSubmitting(false);
 				}
 				// check service conflicts
 				else if (vehicle.services.some(s => moment(s.servicedAt, 'YYYY-MM-DD').isSame(moment(servicedAt, 'YYYY-MM-DD')))) {
@@ -136,13 +137,16 @@ export const AddService = () => {
 					status: true,
 					service: serviceConflict
 				  });
+				  actions.setSubmitting(false);
+
 				} else {
 				  setAddService(true);
+				  actions.setSubmitting(true);
 				}
 			  }}
 			  initialValues={{
 				servicedAt: moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'),
-				serviceOdometer: vehicle ? vehicle.odometerReading : 0
+				odometer: vehicle ? vehicle.odometer : 0
 			  }}
 			>
 			  {({
@@ -173,21 +177,21 @@ export const AddService = () => {
 					</Col>
 				  </Form.Group>
 
-				  <Form.Group as={Row} controlId="serviceOdometer">
+				  <Form.Group as={Row} controlId="odometer">
 					<Form.Label column="true" sm="2">Service odometer:<span
 					  className="text-danger">*</span></Form.Label>
 					<Col sm="10">
 					  <Form.Control
 						onChange={handleChange}
-						name="serviceOdometer"
-						value={values.serviceOdometer}
+						name="odometer"
+						value={values.odometer}
 						type="number"
 						placeholder="Service odometer..."
-						isValid={touched.serviceOdometer && !errors.serviceOdometer}
-						isInvalid={!!errors.serviceOdometer}
+						isValid={touched.odometer && !errors.odometer}
+						isInvalid={!!errors.odometer}
 					  />
 					  <Form.Control.Feedback type="invalid">
-						{errors.serviceOdometer}
+						{errors.odometer}
 					  </Form.Control.Feedback>
 					</Col>
 				  </Form.Group>

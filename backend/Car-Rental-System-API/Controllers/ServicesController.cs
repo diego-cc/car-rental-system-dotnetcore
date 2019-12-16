@@ -142,7 +142,7 @@ namespace Car_Rental_System_API.Controllers
         }
 
         // DELETE: api/Services/65680537-130d-4469-83cb-5c407721f736
-        [HttpDelete("{uuid:long}")]
+        [HttpDelete("{uuid:guid}")]
         public async Task<ActionResult<Service>> DeleteService(Guid uuid)
         {
             var service = await _context.Services.SingleOrDefaultAsync(s => s.Uuid == uuid);
