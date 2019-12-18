@@ -18,9 +18,9 @@ describe('Booking', () => {
   });
 
   it('correctly updates endOdometer after a journey has been added', () => {
-	const booking = new Booking('fake-id', 'K', '2019-11-26', '2019-11-28', 500, 800, 'booking-id');
+	const booking = new Booking('fake-id', 'K', '2019-11-26', '2019-11-28', 500, 800, [], [], 'booking-id');
 
-	booking.journeys.push(new Journey('booking-id', 500, 1000, '2019-11-26', '2019-11-27', '', '', 'journey-id'));
+	booking.journeys.push(new Journey('booking-id', booking.vehicleUuid, 500, 1000, '2019-11-26', '2019-11-27', '', '', 'journey-id'));
 
 	booking.updateEndOdometer(null, false);
 	const expected = 1000;
