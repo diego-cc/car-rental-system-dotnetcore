@@ -410,7 +410,7 @@ export class App extends React.Component {
 			vehicles: vehicles.map(v => {
 			  const vehicleBookings = v.bookings.map(b => new Booking(b.vehicleUuid, b.type, b.startedAt, b.endedAt, b.startOdometer, null, [], [], b.uuid, b.createdAt, b.updatedAt));
 
-			  const vehicleJourneys = v.journeys.map(j => new Journey(j.bookingUuid, j.startOdometer, j.endOdometer, j.startedAt, j.endedAt, j.journeyFrom, j.journeyTo, j.uuid, j.createdAt, j.updatedAt));
+			  const vehicleJourneys = v.journeys.map(j => new Journey(j.bookingUuid, j.vehicleUuid, j.startOdometer, j.endOdometer, j.startedAt, j.endedAt, j.journeyFrom, j.journeyTo, j.uuid, j.createdAt, j.updatedAt));
 
 			  vehicleBookings.forEach(b => {
 				const associatedJourneys = vehicleJourneys.filter(j => j.bookingUuid === b.uuid);
@@ -420,7 +420,7 @@ export class App extends React.Component {
 				})
 			  });
 
-			  const vehicleFuelPurchases = v.fuelPurchases.map(f => new FuelPurchase(f.bookingUuid, f.fuelQuantity, f.fuelPrice, f.uuid, f.createdAt, f.updatedAt));
+			  const vehicleFuelPurchases = v.fuelPurchases.map(f => new FuelPurchase(f.bookingUuid, f.vehicleUuid, f.fuelQuantity, f.fuelPrice, f.uuid, f.createdAt, f.updatedAt));
 
 			  vehicleBookings.forEach(b => {
 				const associatedFuelPurchases = vehicleFuelPurchases.filter(f => f.bookingUuid === b.uuid);
@@ -472,11 +472,11 @@ export class App extends React.Component {
 			break;
 
 		  case 'journeys':
-			resource = new Journey(resource[`booking_uuid`], resource[`start_odometer`], resource[`end_odometer`], resource[`started_at`], resource[`ended_at`], resource[`journey_from`], resource[`journey_to`], resource.uuid, resource[`created_at`], resource[`updated_at`]);
+			resource = new Journey(resource[`booking_uuid`], resource[`vehicle_uuid`], resource[`start_odometer`], resource[`end_odometer`], resource[`started_at`], resource[`ended_at`], resource[`journey_from`], resource[`journey_to`], resource.uuid, resource[`created_at`], resource[`updated_at`]);
 			break;
 
 		  case 'fuel_purchases':
-			resource = new FuelPurchase(resource[`booking_uuid`], resource[`fuel_quantity`], resource[`fuel_price`], resource.uuid, resource[`created_at`], resource[`updated_at`]);
+			resource = new FuelPurchase(resource[`booking_uuid`], resource[`vehicle_uuid`], resource[`fuel_quantity`], resource[`fuel_price`], resource.uuid, resource[`created_at`], resource[`updated_at`]);
 			break;
 
 		  case 'services':

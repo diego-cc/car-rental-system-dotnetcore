@@ -24,7 +24,8 @@ export class Journey {
 
   /**
    * Creates a new Journey
-   * @param {string} bookingUuid - ID of the booking associated with this journey
+   * @param {string} bookingUuid - UUID of the booking associated with this journey
+   * @param {string} vehicleUuid - UUID of the vehicle associated with this journey
    * @param {number} startOdometer - odometer reading at the start of this journey
    * @param {number} endOdometer - odometer reading at the end of this journey
    * @param {Date|string} startedAt - start date of this journey
@@ -35,9 +36,10 @@ export class Journey {
    * @param {string} createdAt - timestamp generated when this journey is created
    * @param {string|null} updatedAt - timestamp generated when this journey is updated
    */
-  constructor(bookingUuid, startOdometer, endOdometer, startedAt, endedAt, journeyFrom, journeyTo, uuid = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
+  constructor(bookingUuid, vehicleUuid, startOdometer, endOdometer, startedAt, endedAt, journeyFrom, journeyTo, uuid = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
 	this._uuid = uuid;
 	this._bookingUuid = bookingUuid;
+	this._vehicleUuid = vehicleUuid;
 	this._startOdometer = startOdometer;
 	this._endOdometer = endOdometer;
 	this._startedAt = startedAt;
@@ -62,6 +64,15 @@ export class Journey {
 
   set bookingUuid(value) {
 	this._bookingUuid = value;
+  }
+
+
+  get vehicleUuid() {
+	return this._vehicleUuid;
+  }
+
+  set vehicleUuid(value) {
+	this._vehicleUuid = value;
   }
 
   get startOdometer() {

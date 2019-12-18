@@ -102,7 +102,7 @@ export const AddJourneyForm = () => {
 			  validationSchema={schema}
 			  onSubmit={(values) => {
 				const {startOdometer, endOdometer, startedAt, endedAt, journeyFrom, journeyTo} = values;
-				const journey = new Journey(bookingID, startOdometer, endOdometer, startedAt, endedAt, journeyFrom, journeyTo);
+				const journey = new Journey(bookingID, vehicle.uuid, startOdometer, endOdometer, startedAt, endedAt, journeyFrom, journeyTo);
 				setJourneyToBeAdded(journey);
 				setAddJourney(true);
 			  }}

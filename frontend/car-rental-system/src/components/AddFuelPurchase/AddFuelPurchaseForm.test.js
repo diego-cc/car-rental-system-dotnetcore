@@ -6,30 +6,23 @@ import {fireEvent, render, wait} from '@testing-library/react';
 import {MemoryRouter, Route} from 'react-router-dom';
 import '@testing-library/jest-dom/extend-expect'
 import {AppProvider} from "../../AppContext/AppContext";
-import {fakeAPI} from "../../setupTests";
+import {fakeAPI, setUpVehicles} from "../../setupTests";
 import {AddFuelPurchaseForm} from "./AddFuelPurchaseForm";
+const cloneDeep = require('lodash.clonedeep');
+
+const {vehicles} = cloneDeep(setUpVehicles(fakeAPI));
 
 let tree, contextValue;
 
 const initialContextValue = {
-  vehicles: fakeAPI.vehicles.map(v => {
-	const vehicleBookings = fakeAPI.bookings.reduce((vBookings, b) => {
-	  if (b.vehicleID === v.id) {
-		b.fuelPurchases.push(...fakeAPI.fuelPurchases.filter(f => f.bookingID === b.id));
-		vBookings.push(b);
-	  }
-	  return vBookings;
-	}, []);
-	v.bookings.push(...vehicleBookings);
-	return v;
-  }),
+  vehicles,
   addResource: (resourceType, resource) => {
 	if (resourceType.trim().toLowerCase() === 'fuel purchase') {
 	  contextValue
 		.vehicles
-		.find(v => v.bookings.some(b => b.id === resource.bookingID))
+		.find(v => v.bookings.some(b => b.uuid === resource.bookingUuid))
 		.bookings
-		.find(b => b.id === resource.bookingID)
+		.find(b => b.uuid === resource.bookingUuid)
 		.fuelPurchases.push(resource);
 	}
   }
@@ -70,8 +63,8 @@ describe('AddFuelPurchaseForm component', () => {
 	fireEvent.click(getByText(/^Add fuel purchase/));
 
 	await wait(() => {
-	  const vehicle = contextValue.vehicles.find(v => v.bookings.some(b => b.id === 'ranger-booking'));
-	  expect(vehicle.bookings.find(b => b.id === 'ranger-booking')
+	  const vehicle = contextValue.vehicles.find(v => v.bookings.some(b => b.uuid === 'ranger-booking'));
+	  expect(vehicle.bookings.find(b => b.uuid === 'ranger-booking')
 		.fuelPurchases.length)
 		.toBe(2);
 	})

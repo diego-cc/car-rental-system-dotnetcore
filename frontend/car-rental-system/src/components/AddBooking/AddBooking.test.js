@@ -9,21 +9,15 @@ import {AddBooking} from "./AddBooking";
 import '@testing-library/jest-dom/extend-expect'
 import {AppProvider} from "../../AppContext/AppContext";
 import moment from "moment";
+const cloneDeep = require('lodash.clonedeep');
+
+const vehicles = cloneDeep(fakeAPI.vehicles);
 
 const initialContextValue = {
-  vehicles: fakeAPI.vehicles.map(v => {
-	const vehicleBookings = fakeAPI.bookings.reduce((vBookings, b) => {
-	  if (b.vehicleID === v.id) {
-		vBookings.push(b);
-	  }
-	  return vBookings;
-	}, []);
-	v.bookings.push(...vehicleBookings);
-	return v;
-  }),
+  vehicles,
   addResource: (resourceType, resource) => {
 	if (resourceType.trim().toLowerCase() === 'booking') {
-	  contextValue.vehicles.find(v => v.id === resource.vehicleID).bookings.push(resource);
+	  contextValue.vehicles.find(v => v.uuid === resource.vehicleUuid).bookings.push(resource);
 	}
   }
 };
@@ -66,7 +60,7 @@ describe('AddBooking component', () => {
 	  fireEvent.change(getByLabelText(/^Start Date:/), {target: {value: '2019-11-26'}});
 	  fireEvent.change(getByLabelText(/^End Date:/), {target: {value: '2019-11-26'}});
 	  fireEvent.click(getByText('Add booking'));
-	  const vehicle = contextValue.vehicles.find(v => v.id === 'tesla-123');
+	  const vehicle = contextValue.vehicles.find(v => v.uuid === 'tesla-123');
 
 	  expect(vehicle.bookings.length).toBe(1);
 	});
@@ -85,7 +79,7 @@ describe('AddBooking component', () => {
 	fireEvent.click(getByText('Add booking'));
 
 	await wait(() => {
-	  const vehicle = contextValue.vehicles.find(v => v.id === 'tesla-123');
+	  const vehicle = contextValue.vehicles.find(v => v.uuid === 'tesla-123');
 	  expect(vehicle.bookings.length).toBe(2);
 	});
   })

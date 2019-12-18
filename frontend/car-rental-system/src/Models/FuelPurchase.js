@@ -20,16 +20,18 @@ export class FuelPurchase {
 
   /**
    * Creates a new FuelPurchase
-   * @param {string} bookingUuid - ID of the booking associated with this fuel purchase
+   * @param {string} bookingUuid - UUID of the booking associated with this fuel purchase
+   * @param {string} vehicleUuid - UUID of the vehicle associated with this fuel purchase
    * @param {number} fuelQuantity - amount of fuel of this purchase (in litres)
    * @param {number} fuelPrice - price per litre of this fuel purchase
    * @param {string} uuid - UUID of this fuel purchase
    * @param {string} createdAt - timestamp generated when this fuel purchase is created
    * @param {string|null} updatedAt - timestamp generated when this fuel purchase is updated
    */
-  constructor(bookingUuid, fuelQuantity, fuelPrice, uuid = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
+  constructor(bookingUuid, vehicleUuid, fuelQuantity, fuelPrice, uuid = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
     this._uuid = uuid;
     this._bookingUuid = bookingUuid;
+    this._vehicleUuid = vehicleUuid;
     this._fuelPrice = fuelPrice;
     this._fuelQuantity = fuelQuantity;
     this._createdAt = createdAt;
@@ -50,6 +52,15 @@ export class FuelPurchase {
 
   set bookingUuid(value) {
     this._bookingUuid = value;
+  }
+
+
+  get vehicleUuid() {
+	return this._vehicleUuid;
+  }
+
+  set vehicleUuid(value) {
+	this._vehicleUuid = value;
   }
 
   get fuelQuantity() {

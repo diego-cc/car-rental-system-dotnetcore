@@ -151,6 +151,10 @@ export class Vehicle {
 	return this._journeys;
   }
 
+  set journeys(value) {
+    this._journeys = value;
+  }
+
   get services() {
 	return this._services;
   }

@@ -88,7 +88,7 @@ export const AddFuelPurchaseForm = () => {
 			  validationSchema={schema}
 			  onSubmit={(values) => {
 				const {fuelQuantity, fuelPrice} = values;
-				const fuelPurchase = new FuelPurchase(bookingID, fuelQuantity, fuelPrice);
+				const fuelPurchase = new FuelPurchase(bookingID, vehicle.uuid, fuelQuantity, fuelPrice);
 				setFuelPurchaseToBeAdded(fuelPurchase);
 				setAddFuelPurchase(true);
 			  }}
