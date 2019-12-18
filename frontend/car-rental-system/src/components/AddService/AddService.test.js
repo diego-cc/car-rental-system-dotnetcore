@@ -4,26 +4,20 @@
 import React from 'react';
 import {act, fireEvent, render, wait} from '@testing-library/react';
 import {MemoryRouter, Route} from 'react-router-dom';
-import {fakeAPI} from "../../setupTests";
+import {fakeAPI, setUpVehicles} from "../../setupTests";
 import {AddService} from "./AddService";
 import '@testing-library/jest-dom/extend-expect'
 import {AppProvider} from "../../AppContext/AppContext";
 import moment from "moment";
+const cloneDeep = require('lodash.clonedeep');
+
+const {vehicles} = cloneDeep(setUpVehicles(fakeAPI));
 
 const initialContextValue = {
-  vehicles: fakeAPI.vehicles.map(v => {
-	const vehicleServices = fakeAPI.services.reduce((vServices, s) => {
-	  if (s.vehicleID === v.id) {
-		vServices.push(s);
-	  }
-	  return vServices;
-	}, []);
-	v.services.push(...vehicleServices);
-	return v;
-  }),
+  vehicles,
   addResource: (resourceType, resource) => {
 	if (resourceType.trim().toLowerCase() === 'service') {
-	  contextValue.vehicles.find(v => v.id === resource.vehicleID).services.push(resource);
+	  contextValue.vehicles.find(v => v.uuid === resource.vehicleUuid).services.push(resource);
 	}
   }
 };
@@ -65,7 +59,7 @@ describe('AddService component', () => {
 	});
 
 	await wait(() => {
-	  const vehicle = contextValue.vehicles.find(v => v.id === 'tesla-123');
+	  const vehicle = contextValue.vehicles.find(v => v.uuid === 'tesla-123');
 	  expect(vehicle.services.length).toBe(1);
 	});
   });
@@ -82,7 +76,7 @@ describe('AddService component', () => {
 	});
 
 	await wait(() => {
-	  const vehicle = contextValue.vehicles.find(v => v.id === 'tesla-123');
+	  const vehicle = contextValue.vehicles.find(v => v.uuid === 'tesla-123');
 	  expect(vehicle.services.length).toBe(2);
 	});
   })

@@ -333,6 +333,62 @@ export class App extends React.Component {
 					}, this.dismissNotification)
 				  });
 			  }
+			  else {
+			    if (collection === 'vehicles') {
+			      this.setState(prevState => ({
+					vehicles: prevState.vehicles.filter(v => v.uuid !== resource.uuid),
+					loading: false
+				  }))
+				}
+			    else {
+			      const {vehicles} = this.state;
+				  const vehicleToBeModified = vehicles.find(v => v.uuid === resource.vehicleUuid);
+
+			      if (collection === 'bookings') {
+			        this.setState(prevState => {
+					  vehicleToBeModified.removeBookingByUUID(resource.uuid);
+
+					  return ({
+						vehicles,
+						loading: false
+					  })
+					})
+				  }
+			      else if (collection === 'journeys') {
+			        this.setState(prevState => {
+			          vehicleToBeModified.removeJourneyByBookingUUID(resource, resource.bookingUuid);
+
+			          return ({
+						vehicles,
+						loading: false
+					  })
+					})
+				  }
+			      else if (collection === 'fuel_purchases') {
+			        this.setState(prevState => {
+			          vehicleToBeModified.removeFuelPurchaseByBookingUUID(resource, resource.bookingUuid);
+
+					  return ({
+						vehicles,
+						loading: false
+					  })
+					})
+				  }
+			      else if (collection === 'services') {
+					this.setState(prevState => {
+					  vehicleToBeModified.removeServiceByUUID(resource.uuid);
+
+					  return ({
+						vehicles,
+						loading: false
+					  })
+					})
+				  }
+			      else {
+			        throw new Error('Invalid collection name');
+				  }
+				}
+			  }
 			} else {
 			  this.setState({
 				loading: false,

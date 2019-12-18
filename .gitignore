@@ -439,3 +439,5 @@ thumb
 sketch
 
 # End of https://www.gitignore.io/api/react,aspnetcore,jetbrains+all,openframeworks+visualstudio
+
+__snapshots__/

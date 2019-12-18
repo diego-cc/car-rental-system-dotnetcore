@@ -5,8 +5,9 @@ import {AppProvider} from "../../AppContext/AppContext";
 import {fakeAPI, setUpVehicles} from "../../setupTests";
 import {calculateTotalRevenue} from "../App/calculateTotalRevenue";
 import {MemoryRouter, Route} from "react-router-dom";
+const cloneDeep = require('lodash.clonedeep');
 
-const {vehicles} = setUpVehicles(fakeAPI);
+const {vehicles} = cloneDeep(setUpVehicles(fakeAPI).vehicles);
 
 const contextValue = {
   vehicles,

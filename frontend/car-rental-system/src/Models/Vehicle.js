@@ -67,13 +67,13 @@ export class Vehicle {
   }
 
   /**
-   * Removes a booking from {@link bookings} by its ID
-   * @param {string} bookingUuid - the ID of the booking to be removed
+   * Removes a booking from {@link bookings} by its UUID
+   * @param {string} bookingUuid - the UUID of the booking to be removed
    */
-  removeBookingByID(bookingUuid) {
+  removeBookingByUUID(bookingUuid) {
 	if (bookingUuid) {
 	  const bookingsCopy = [...this.bookings];
-	  const bookingToBeDeleted = bookingsCopy.find(booking => booking.id === bookingUuid);
+	  const bookingToBeDeleted = bookingsCopy.find(booking => booking.uuid === bookingUuid);
 
 	  if (bookingToBeDeleted) {
 		this.bookings = bookingsCopy.filter(booking => booking.uuid !== bookingToBeDeleted.uuid);
@@ -87,7 +87,7 @@ export class Vehicle {
    * @param {Journey} journey - the journey to be removed
    * @param {string} bookingUuid - the UUID of the booking that contains the journey to be removed
    */
-  removeJourneyByBookingID(journey, bookingUuid) {
+  removeJourneyByBookingUUID(journey, bookingUuid) {
 	this.bookings.find(b => b.uuid === bookingUuid).removeJourney(journey);
 	this.updateVehicleOdometer(null, false);
   }
@@ -110,7 +110,7 @@ export class Vehicle {
 	this.services.push(newService);
   }
 
-  removeServiceByID(serviceUuid) {
+  removeServiceByUUID(serviceUuid) {
 	if (serviceUuid) {
 	  const servicesCopy = [...this.services];
 	  const serviceToBeDeleted = servicesCopy.find(service => service.uuid === serviceUuid);
@@ -133,9 +133,9 @@ export class Vehicle {
   /**
    * Removes a fuel purchase based on its bookingID
    * @param {FuelPurchase} fuelPurchase - The fuel purchase to be removed
-   * @param {string} bookingUuid - The ID of the booking associated with this fuel purchase
+   * @param {string} bookingUuid - The UUID of the booking associated with this fuel purchase
    */
-  removeFuelPurchaseByBookingID(fuelPurchase, bookingUuid) {
+  removeFuelPurchaseByBookingUUID(fuelPurchase, bookingUuid) {
 	this.bookings.find(b => b.uuid === bookingUuid).removeFuelPurchase(fuelPurchase);
   }
 

@@ -6,31 +6,23 @@ import {act, fireEvent, render, wait} from '@testing-library/react';
 import {MemoryRouter, Route} from 'react-router-dom';
 import '@testing-library/jest-dom/extend-expect'
 import {AppProvider} from "../../AppContext/AppContext";
-import {fakeAPI} from "../../setupTests";
+import {fakeAPI, setUpVehicles} from "../../setupTests";
 import {AddJourneyForm} from "./AddJourneyForm";
-import moment from "moment";
+const cloneDeep = require('lodash.clonedeep');
+
+const {vehicles} = cloneDeep(setUpVehicles(fakeAPI));
 
 let tree, contextValue;
 
 const initialContextValue = {
-  vehicles: fakeAPI.vehicles.map(v => {
-	const vehicleBookings = fakeAPI.bookings.reduce((vBookings, b) => {
-	  if (b.vehicleID === v.id) {
-		b.journeys.push(...fakeAPI.journeys.filter(j => j.bookingID === b.id));
-		vBookings.push(b);
-	  }
-	  return vBookings;
-	}, []);
-	v.bookings.push(...vehicleBookings);
-	return v;
-  }),
+  vehicles,
   addResource: (resourceType, resource) => {
 	if (resourceType.trim().toLowerCase() === 'journey') {
 	  contextValue
 		.vehicles
-		.find(v => v.bookings.some(b => b.id === resource.bookingID))
+		.find(v => v.bookings.some(b => b.uuid === resource.bookingUuid))
 		.bookings
-		.find(b => b.id === resource.bookingID)
+		.find(b => b.uuid === resource.bookingUuid)
 		.journeys.push(resource);
 	}
   }
@@ -57,13 +49,13 @@ beforeEach(() => {
 
 describe('AddJourneyForm component', () => {
   it('loads AddJourneyForm with correct default values', () => {
-    const associatedBooking = contextValue.vehicles.find(v => v.id === 'ranger-123').bookings.find(b => b.id === 'ranger-booking');
+    const associatedBooking = contextValue.vehicles.find(v => v.uuid === 'ranger-123').bookings.find(b => b.uuid === 'ranger-booking');
 
 	const {getByLabelText} = render(tree);
 
 	act(() => {
-	  expect(getByLabelText(/^Journey started at:/)).toHaveValue(associatedBooking.startDate);
-	  expect(getByLabelText(/^Journey ended at:/)).toHaveValue(associatedBooking.startDate);
+	  expect(getByLabelText(/^Journey started at:/)).toHaveValue(associatedBooking.startedAt);
+	  expect(getByLabelText(/^Journey ended at:/)).toHaveValue(associatedBooking.startedAt);
 	  expect(getByLabelText(/^Journey start odometer reading:/)).toHaveValue(800);
 	  expect(getByLabelText(/^Journey end odometer reading:/)).toHaveValue(800);
 	  expect(getByLabelText(/^Journey from:/)).toHaveValue('');
@@ -78,8 +70,8 @@ describe('AddJourneyForm component', () => {
 	fireEvent.click(getByText(/^Add journey/));
 
 	await wait(() => {
-	  const vehicle = contextValue.vehicles.find(v => v.bookings.some(b => b.id === 'ranger-booking'));
-	  expect(vehicle.bookings.find(b => b.id === 'ranger-booking')
+	  const vehicle = contextValue.vehicles.find(v => v.bookings.some(b => b.uuid === 'ranger-booking'));
+	  expect(vehicle.bookings.find(b => b.uuid === 'ranger-booking')
 		.journeys.length)
 		.toBe(3);
 	});

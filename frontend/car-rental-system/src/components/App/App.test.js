@@ -9,7 +9,6 @@ import {Journey} from "../../Models/Journey";
 import {FuelPurchase} from "../../Models/FuelPurchase";
 import {Service} from "../../Models/Service";
 import {calculateTotalRevenue} from './calculateTotalRevenue';
-
 const cloneDeep = require('lodash.clonedeep');
 
 const initialVehiclesData = cloneDeep(setUpVehicles(fakeAPI).vehicles);
@@ -36,15 +35,15 @@ beforeEach(() => {
 describe('App component', () => {
   it('edits a vehicle', () => {
 	const editedVehicle = cloneDeep(app.state('vehicles')[0]);
-	editedVehicle.registrationNumber = 'TEST123';
+	editedVehicle.registration = 'TEST123';
 
 	app.instance().editVehicle(editedVehicle, false);
 
-	expect(app.state('vehicles')[0].registrationNumber).toBe('TEST123');
+	expect(app.state('vehicles')[0].registration).toBe('TEST123');
   });
 
   it('adds a vehicle', () => {
-	const vehicleToBeAdded = new Vehicle('Toyota', 'Corolla Hatch', 2019, 0, 'CHT1853', 50, 'toyota-corolla');
+	const vehicleToBeAdded = new Vehicle('Toyota', 'Corolla Hatch', 2019, 0, 'CHT1853', 50, [], [], [], [], 'toyota-corolla');
 
 	app.instance().addResource('vehicle', vehicleToBeAdded, false);
 
@@ -53,7 +52,7 @@ describe('App component', () => {
 
   it('adds a booking to an existing vehicle', () => {
 	const tesla = app.state('vehicles')[0];
-	const booking = new Booking(tesla.id, 'K', '2020-03-22', '2020-03-26', tesla.odometerReading, tesla.odometerReading + 800, 'tesla-fake-booking');
+	const booking = new Booking(tesla.uuid, 'K', '2020-03-22', '2020-03-26', tesla.odometer, tesla.odometer + 800, [], [], 'tesla-fake-booking');
 
 	app.instance().addResource('booking', booking, false);
 
@@ -62,7 +61,7 @@ describe('App component', () => {
 
   it('adds a journey to an existing booking', () => {
 	const teslaBooking = app.state('vehicles')[0].bookings[0];
-	const journey = new Journey(teslaBooking.id, teslaBooking.startOdometer, teslaBooking.endOdometer, teslaBooking.startDate, teslaBooking.endDate, '', '', 'tesla-fake-journey');
+	const journey = new Journey(teslaBooking.uuid, teslaBooking.vehicleUuid, teslaBooking.startOdometer, teslaBooking.endOdometer, teslaBooking.startedAt, teslaBooking.endedAt, '', '', 'tesla-fake-journey');
 
 	app.instance().addResource('journey', journey, false);
 
@@ -71,7 +70,7 @@ describe('App component', () => {
 
   it('adds a fuel purchase to an existing booking', () => {
 	const rangerBooking = app.state('vehicles')[1].bookings[0];
-	const fuelPurchase = new FuelPurchase(rangerBooking.id, 10, 1.5, 'ranger-fake-fp');
+	const fuelPurchase = new FuelPurchase(rangerBooking.uuid, rangerBooking.vehicleUuid, 10, 1.5, 'ranger-fake-fp');
 
 	app.instance().addResource('fuelPurchase', fuelPurchase, false);
 
@@ -80,7 +79,7 @@ describe('App component', () => {
 
   it('adds a service to an existing vehicle', () => {
 	const holden = app.state('vehicles')[2];
-	const service = new Service(holden.id, holden.odometerReading + 1000, '2019-12-20', 'holden-fake-service');
+	const service = new Service(holden.uuid, holden.odometer + 1000, '2019-12-20', 'holden-fake-service');
 
 	app.instance().addResource('service', service, false);
 

@@ -27,8 +27,8 @@ describe('VehicleForm component', () => {
     contextValue = {
 		...contextValue,
 		handleSubmit: values => {
-		  const {manufacturer, model, year, odometerReading, registrationNumber, tankCapacity} = values;
-		  const vehicleToBeAdded = new Vehicle(manufacturer, model, year, odometerReading, registrationNumber, tankCapacity);
+		  const {manufacturer, model, year, odometer, registration, tankSize} = values;
+		  const vehicleToBeAdded = new Vehicle(manufacturer, model, year, odometer, registration, tankSize);
 
 		  contextValue.vehicles.push(vehicleToBeAdded);
 		}
@@ -53,7 +53,7 @@ describe('VehicleForm component', () => {
 	fireEvent.change(getByLabelText(/^Odometer Reading/), {target: {value: '10000'}});
 	fireEvent.change(getByLabelText(/^Tank Capacity/), {target: {value: '93'}});
 
-	fireEvent.click(getByText('Add vehicle'));
+	fireEvent.click(getByText('Save changes'));
 
 	await wait(() => {
 	  expect(contextValue.vehicles).toHaveLength(4);
@@ -61,7 +61,7 @@ describe('VehicleForm component', () => {
   });
 
   it('edits a vehicle', async () => {
-	const vehicleToBeEdited = cloneDeep(contextValue.vehicles.find(v => v.id === 'holden-123'));
+	const vehicleToBeEdited = cloneDeep(contextValue.vehicles.find(v => v.uuid === 'holden-123'));
 
 	contextValue = {
 	  ...contextValue,
@@ -70,11 +70,11 @@ describe('VehicleForm component', () => {
 		  if (vehicleToBeEdited.hasOwnProperty(`_${field}`)) {
 			vehicleToBeEdited[field] = values[field];
 		  }
-		};
+		}
 
 		vehicleToBeEdited.updatedAt = moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD');
 
-		contextValue.vehicles[contextValue.vehicles.findIndex(v => v.id === vehicleToBeEdited.id)] = vehicleToBeEdited;
+		contextValue.vehicles[contextValue.vehicles.findIndex(v => v.uuid === vehicleToBeEdited.uuid)] = vehicleToBeEdited;
 	  }
 	};
 
@@ -97,12 +97,12 @@ describe('VehicleForm component', () => {
 	const {getByText, getByLabelText} = component;
 
 	fireEvent.change(getByLabelText(/^Registration/), {target: {value: '1TEST99'}});
-	fireEvent.click(getByText('Edit vehicle'));
+	fireEvent.click(getByText('Save changes'));
 
 	await wait(() => {
-	  expect(contextValue.vehicles.find(v => v.id === vehicleToBeEdited.id).registrationNumber)
+	  expect(contextValue.vehicles.find(v => v.uuid === vehicleToBeEdited.uuid).registration)
 		.toEqual('1TEST99');
-	  expect(contextValue.vehicles.find(v => v.id === vehicleToBeEdited.id).updatedAt)
+	  expect(contextValue.vehicles.find(v => v.uuid === vehicleToBeEdited.uuid).updatedAt)
 		.toEqual(moment(moment(), 'YYYY-MM-DD').format('YYYY-MM-DD'));
 	});
   });

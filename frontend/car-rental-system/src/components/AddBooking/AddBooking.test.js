@@ -4,14 +4,14 @@
 import React from 'react';
 import {act, fireEvent, render, wait} from '@testing-library/react';
 import {MemoryRouter, Route} from 'react-router-dom';
-import {fakeAPI} from "../../setupTests";
+import {fakeAPI, setUpVehicles} from "../../setupTests";
 import {AddBooking} from "./AddBooking";
 import '@testing-library/jest-dom/extend-expect'
 import {AppProvider} from "../../AppContext/AppContext";
 import moment from "moment";
 const cloneDeep = require('lodash.clonedeep');
 
-const vehicles = cloneDeep(fakeAPI.vehicles);
+const {vehicles} = cloneDeep(setUpVehicles(fakeAPI));
 
 const initialContextValue = {
   vehicles,

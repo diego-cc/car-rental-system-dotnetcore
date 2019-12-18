@@ -8,9 +8,10 @@ import {fakeAPI, setUpVehicles} from "../../setupTests";
 import {BrowseVehicles} from "./BrowseVehicles";
 import '@testing-library/jest-dom/extend-expect'
 import {AppProvider} from "../../AppContext/AppContext";
+const cloneDeep = require('lodash.clonedeep');
 
 const initialContextValue = {
-  vehicles: setUpVehicles(fakeAPI).vehicles,
+  vehicles: cloneDeep(setUpVehicles(fakeAPI).vehicles),
   loading: false,
   notification: {
     display: false,

@@ -6,10 +6,11 @@ import {fakeAPI, setUpVehicles} from "../../setupTests";
 import {AppProvider} from "../../AppContext/AppContext";
 import {DeleteResourceModal} from "./DeleteResourceModal";
 import {render, wait} from '@testing-library/react';
+const cloneDeep = require('lodash.clonedeep');
 
 let contextValue;
 const initialContextValue = {
-  vehicles: setUpVehicles(fakeAPI).vehicles
+  vehicles: cloneDeep(setUpVehicles(fakeAPI).vehicles)
 };
 
 beforeEach(() => {
@@ -33,7 +34,7 @@ describe('DeleteResourceModal component', () => {
 	  deleteResource: {
 		...contextValue.deleteResource,
 		resourceType: 'vehicle',
-		resource: contextValue.vehicles.find(v => v.id === 'tesla-123')
+		resource: contextValue.vehicles.find(v => v.uuid === 'tesla-123')
 	  }
 	};
 
@@ -62,7 +63,7 @@ describe('DeleteResourceModal component', () => {
 	  deleteResource: {
 		...contextValue.deleteResource,
 		resourceType: 'booking',
-		resource: contextValue.vehicles.find(v => v.bookings.some(b => b.id === bookingID)).bookings.find(b => b.id === bookingID)
+		resource: contextValue.vehicles.find(v => v.bookings.some(b => b.uuid === bookingID)).bookings.find(b => b.uuid === bookingID)
 	  }
 	};
 
@@ -92,7 +93,7 @@ describe('DeleteResourceModal component', () => {
 	  deleteResource: {
 		...contextValue.deleteResource,
 		resourceType: 'journey',
-		resource: contextValue.vehicles.find(v => v.bookings.some(b => b.id === bookingID)).bookings.find(b => b.id === bookingID).journeys.find(j => j.id === journeyID)
+		resource: contextValue.vehicles.find(v => v.bookings.some(b => b.uuid === bookingID)).bookings.find(b => b.uuid === bookingID).journeys.find(j => j.uuid === journeyID)
 	  }
 	};
 
@@ -123,7 +124,7 @@ describe('DeleteResourceModal component', () => {
 	  deleteResource: {
 		...contextValue.deleteResource,
 		resourceType: 'fuelPurchase',
-		resource: contextValue.vehicles.find(v => v.bookings.some(b => b.id === bookingID)).bookings.find(b => b.id === bookingID).fuelPurchases.find(f => f.id === fuelPurchaseID)
+		resource: contextValue.vehicles.find(v => v.bookings.some(b => b.uuid === bookingID)).bookings.find(b => b.uuid === bookingID).fuelPurchases.find(f => f.uuid === fuelPurchaseID)
 	  }
 	};
 
@@ -151,7 +152,7 @@ describe('DeleteResourceModal component', () => {
 	  deleteResource: {
 		...contextValue.deleteResource,
 		resourceType: 'service',
-		resource: contextValue.vehicles.find(v => v.id === vehicleID).services.find(s => s.id === serviceID)
+		resource: contextValue.vehicles.find(v => v.uuid === vehicleID).services.find(s => s.uuid === serviceID)
 	  }
 	};
 

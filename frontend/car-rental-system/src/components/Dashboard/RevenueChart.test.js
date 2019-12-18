@@ -6,9 +6,10 @@ import {RevenueChart} from "./RevenueChart";
 import {fakeAPI, setUpVehicles} from "../../setupTests";
 import {calculateTotalRevenue} from '../App/calculateTotalRevenue';
 import {mount} from 'enzyme';
+const cloneDeep = require('lodash.clonedeep');
 
 const initialContext = {
-  vehicles: setUpVehicles(fakeAPI).vehicles
+  vehicles: cloneDeep(setUpVehicles(fakeAPI).vehicles)
 };
 
 describe('RevenueChart component', () => {

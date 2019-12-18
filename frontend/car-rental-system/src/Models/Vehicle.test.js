@@ -42,16 +42,16 @@ describe('Vehicle component', () => {
 
   it('correctly updates the odometer', () => {
 	const tesla = initialVehiclesData[0];
-	const teslaBooking = new Booking(tesla.id, 'K', moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'), tesla.odometerReading, tesla.odometerReading + 500, 'fake-tesla-booking');
+	const teslaBooking = new Booking(tesla.uuid, 'K', moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'), tesla.odometer, tesla.odometer + 500, [], [], 'fake-tesla-booking');
 
-	const teslaJourney = new Journey(teslaBooking.id, teslaBooking.startOdometer, teslaBooking.endOdometer, moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'), '', '', 'fake-tesla-journey');
+	const teslaJourney = new Journey(teslaBooking.uuid, teslaBooking.vehicleUuid, teslaBooking.startOdometer, teslaBooking.endOdometer, moment().format('YYYY-MM-DD'), moment().format('YYYY-MM-DD'), '', '', 'fake-tesla-journey');
 
 	teslaBooking.journeys.push(teslaJourney);
 	tesla.bookings.push(teslaBooking);
 
-	const expected = tesla.odometerReading + 500;
+	const expected = tesla.odometer + 500;
 	tesla.updateVehicleOdometer(null, false);
 
-	expect(tesla.odometerReading).toBe(expected);
+	expect(tesla.odometer).toBe(expected);
   });
 });

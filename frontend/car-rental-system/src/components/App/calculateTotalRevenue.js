@@ -14,7 +14,9 @@ import moment from "moment";
  */
 export const calculateTotalRevenue = (vehicles, state = null) => {
   let data = [];
-  vehicles = vehicles || state.vehicles;
+  if (state) {
+	vehicles = state.vehicles;
+  }
   if (vehicles && vehicles.length) {
 	vehicles.forEach(v => {
 	  const vehicleRevenue =

@@ -7,10 +7,11 @@ import {MemoryRouter} from "react-router-dom";
 import {SearchVehicle} from "./SearchVehicle";
 import { render, fireEvent, wait } from '@testing-library/react';
 import React from "react";
+const cloneDeep = require('lodash.clonedeep');
 
 let tree, contextValue;
 const initialContextValue = {
-  vehicles: setUpVehicles(fakeAPI).vehicles
+  vehicles: cloneDeep(setUpVehicles(fakeAPI).vehicles)
 };
 
 beforeEach(() => {

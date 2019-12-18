@@ -27,7 +27,7 @@ describe('VehicleDetails component', () => {
 	contextValue = {
 	  ...initialContextValue
 	};
-	const vehicle = contextValue.vehicles.find(v => v.id === 'holden-123');
+	const vehicle = contextValue.vehicles.find(v => v.uuid === 'holden-123');
 
 	const component = render(
 	  <AppProvider value={contextValue}>

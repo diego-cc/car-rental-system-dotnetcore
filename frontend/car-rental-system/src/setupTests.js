@@ -35,7 +35,7 @@ export const fakeAPI = {
   ],
   fuelPurchases: [
 	new FuelPurchase('tesla-booking', 'tesla-123', 20, 1.5, 'tesla-fuel'),
-	new FuelPurchase('ranger-booking', 'tesla-123', 15, 1.3, 'ranger-fuel'),
+	new FuelPurchase('ranger-booking', 'ranger-123', 15, 1.3, 'ranger-fuel'),
 	new FuelPurchase('holden-booking', 'holden-123', 30, 1.2, 'holden-fuel')
   ],
   bookings: [

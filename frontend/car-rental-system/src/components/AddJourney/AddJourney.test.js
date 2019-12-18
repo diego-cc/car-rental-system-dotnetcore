@@ -7,22 +7,16 @@ import {MemoryRouter, Route} from 'react-router-dom';
 import '@testing-library/jest-dom/extend-expect'
 import {AppProvider} from "../../AppContext/AppContext";
 import {AddJourney} from "./AddJourney";
-import {fakeAPI} from "../../setupTests";
+import {fakeAPI, setUpVehicles} from "../../setupTests";
+const cloneDeep = require('lodash.clonedeep');
+
+const {vehicles} = cloneDeep(setUpVehicles(fakeAPI));
 
 let tree, contextValue;
 
 beforeEach(() => {
   contextValue = {
-	vehicles: fakeAPI.vehicles.map(v => {
-	  const vehicleBookings = fakeAPI.bookings.reduce((vBookings, b) => {
-		if (b.vehicleID === v.id) {
-		  vBookings.push(b);
-		}
-		return vBookings;
-	  }, []);
-	  v.bookings.push(...vehicleBookings);
-	  return v;
-	}),
+	vehicles,
 	loading: false,
 	notification: {
 	  display: false,
