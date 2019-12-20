@@ -16,16 +16,7 @@ namespace Car_Rental_System_API
         public virtual DbSet<Journey> Journeys { get; set; }
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<Vehicle> Vehicles { get; set; }
-
-        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseMySql("server=localhost;database=nmt_fleet_manager;user=nmt_fleet_manager;password=Fleet2019S2", x => x.ServerVersion("5.7.24-mysql"));
-            }
-        }*/
-
+/*
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Booking>(entity =>
@@ -358,6 +349,6 @@ namespace Car_Rental_System_API
             OnModelCreatingPartial(modelBuilder);
         }
 
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);*/
     }
 }
