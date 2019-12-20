@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -16,6 +17,8 @@ namespace Car_Rental_System_API
             Services = new HashSet<Service>();
         }
 
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Required]
         public ulong Id { get; set; }
         [Required]
         public Guid Uuid { get; set; }

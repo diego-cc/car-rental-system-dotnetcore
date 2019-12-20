@@ -1,6 +1,5 @@
 using System;
 using Xunit;
-using Moq;
 using Car_Rental_System_API;
 using Car_Rental_System_API.Controllers;
 using Microsoft.Data.Sqlite;
@@ -11,7 +10,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Diagnostics;
 using Xunit.Abstractions;
+using Microsoft.Extensions.Options;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using Car_Rental_System_Test.Config;
 
+/**
+ * NOTE:
+ * Comment out OnModelCreating() and OnModelCreatingPartial() (on Models/NMTFleetManagerContext.cs) before running tests
+ * Otherwise they will fail, because of syntax differences between MySQL and SQLite and some EFCore quirks
+ * I have tried my best to come up with an alternative that remains close to MySQL and that doesn't involve rewriting the whole DBContext configuration
+ * No luck so far though
+ */
 namespace Car_Rental_System_Test
 {
     public class VehiclesControllerTest
@@ -36,12 +45,14 @@ namespace Car_Rental_System_Test
             // Arrange (DB schema)
             try
             {
+                // TODO: UseModel to override OnModelCreating
                 var options = new DbContextOptionsBuilder<NMTFleetManagerContext>()
                     .UseSqlite(connection)
                     .Options;
 
                 using (context = new NMTFleetManagerContext(options))
                 {
+                    context.Database.OpenConnection();
                     context.Database.EnsureCreated();
                 }
 
@@ -60,9 +71,11 @@ namespace Car_Rental_System_Test
                     vehiclesController = new VehiclesController(context);
                     var result = await vehiclesController.GetVehicles();
 
-                    Assert.IsType<ActionResult<IEnumerable<Vehicle>>>(result);
+                    var vehicles = Assert.IsAssignableFrom<IEnumerable<Vehicle>>(result);
 
-                    // Assert.IsAssignableFrom<IEnumerable<Vehicle>>(result.Value);
+                    var actual = vehicles.Count();
+
+                    Assert.Equal(expected, actual);
                 }
             }
             finally

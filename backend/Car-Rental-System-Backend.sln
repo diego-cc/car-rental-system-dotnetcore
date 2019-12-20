@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Car-Rental-System-API", "Car-Rental-System-API\Car-Rental-System-API.csproj", "{5BAEBB23-DC83-4598-8277-8CCCB61B725B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Car-Rental-System-API", "Car-Rental-System-API\Car-Rental-System-API.csproj", "{5BAEBB23-DC83-4598-8277-8CCCB61B725B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Car-Rental-System-Test", "Car-Rental-System-Test\Car-Rental-System-Test.csproj", "{6F7FA9DF-F2D3-4EF9-84E2-9E906F35D5DE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Car-Rental-System-Test", "Car-Rental-System-Test\Car-Rental-System-Test.csproj", "{6F7FA9DF-F2D3-4EF9-84E2-9E906F35D5DE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{5BAEBB23-DC83-4598-8277-8CCCB61B725B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -44,5 +41,11 @@ Global
 		{6F7FA9DF-F2D3-4EF9-84E2-9E906F35D5DE}.Release|x64.Build.0 = Release|Any CPU
 		{6F7FA9DF-F2D3-4EF9-84E2-9E906F35D5DE}.Release|x86.ActiveCfg = Release|Any CPU
 		{6F7FA9DF-F2D3-4EF9-84E2-9E906F35D5DE}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {33D11097-019D-4498-9D5A-A831FFA997AB}
 	EndGlobalSection
 EndGlobal

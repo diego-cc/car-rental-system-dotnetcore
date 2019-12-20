@@ -22,10 +22,10 @@ namespace Car_Rental_System_API.Controllers
 
         // GET: api/Vehicles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Vehicle>>> GetVehicles()
+        public async Task<IEnumerable<Vehicle>> GetVehicles()
         {
             var mappedVehicles = await MapPropertiesToVehicles();
-            return Ok(mappedVehicles);
+            return mappedVehicles;
         }
 
         // GET: api/Vehicles/5

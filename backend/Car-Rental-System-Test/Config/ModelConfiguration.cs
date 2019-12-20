@@ -1,39 +1,32 @@
-﻿using System;
-using System.Diagnostics;
+﻿using Car_Rental_System_API;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
-namespace Car_Rental_System_API
+namespace Car_Rental_System_Test.Config
 {
-    public partial class NMTFleetManagerContext : DbContext
+    /// <summary>
+    /// Used to create a ModelBuilder that works specifically for SQLite
+    /// (for testing purposes only)
+    /// </summary>
+    public class ModelConfiguration
     {
-        public NMTFleetManagerContext(DbContextOptions<NMTFleetManagerContext> options)
-            : base(options)
+        public static ModelBuilder GetModel()
         {
-        }
+            ModelBuilder modelBuilder = new ModelBuilder(new ConventionSet());
 
-        public virtual DbSet<Booking> Bookings { get; set; }
-        public virtual DbSet<FuelPurchase> FuelPurchases { get; set; }
-        public virtual DbSet<Journey> Journeys { get; set; }
-        public virtual DbSet<Service> Services { get; set; }
-        public virtual DbSet<Vehicle> Vehicles { get; set; }
-
-        /**
-         * Comment out OnModelCreating() and OnModelCreatingPartial() before running tests
-         * Otherwise they will fail, because of syntax differences between MySQL and SQLite
-         * 
-         */
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
             modelBuilder.Entity<Booking>(entity =>
             {
                 entity.ToTable("bookings");
 
                 entity.HasIndex(e => new { e.Id, e.Uuid })
-                    .HasName("id");
+                    .HasName("booking_index");
 
                 entity.HasIndex(e => new { e.VehicleId, e.VehicleUuid })
-                    .HasName("vehicle_id");
+                    .HasName("booking_vehicle_index");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -66,7 +59,7 @@ namespace Car_Rental_System_API
                 entity.Property(e => e.Type)
                     .IsRequired()
                     .HasColumnName("type")
-                    .HasColumnType("enum('D','K')")
+                    .HasColumnType("text")
                     .HasDefaultValueSql("'D'")
                     .HasCharSet("utf8mb4")
                     .HasCollation("utf8mb4_general_ci");
@@ -96,13 +89,13 @@ namespace Car_Rental_System_API
                 entity.ToTable("fuel_purchases");
 
                 entity.HasIndex(e => new { e.BookingId, e.BookingUuid })
-                    .HasName("booking_id");
+                    .HasName("fuel_purchase_booking_index");
 
                 entity.HasIndex(e => new { e.Id, e.Uuid })
-                    .HasName("id");
+                    .HasName("fuel_purchase_index");
 
                 entity.HasIndex(e => new { e.VehicleId, e.VehicleUuid })
-                    .HasName("vehicle_id");
+                    .HasName("fuel_purchase_vehicle_index");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -155,13 +148,13 @@ namespace Car_Rental_System_API
                 entity.ToTable("journeys");
 
                 entity.HasIndex(e => new { e.BookingId, e.BookingUuid })
-                    .HasName("booking_id");
+                    .HasName("journey_booking_index");
 
                 entity.HasIndex(e => new { e.Id, e.Uuid })
-                    .HasName("id");
+                    .HasName("journey_index");
 
                 entity.HasIndex(e => new { e.VehicleId, e.VehicleUuid })
-                    .HasName("vehicle_id");
+                    .HasName("journey_vehicle_index");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -239,10 +232,10 @@ namespace Car_Rental_System_API
                 entity.ToTable("services");
 
                 entity.HasIndex(e => new { e.Id, e.Uuid })
-                    .HasName("id");
+                    .HasName("service_index");
 
                 entity.HasIndex(e => new { e.VehicleId, e.VehicleUuid })
-                    .HasName("vehicle_id");
+                    .HasName("service_vehicle_index");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
@@ -287,11 +280,13 @@ namespace Car_Rental_System_API
                 entity.ToTable("vehicles");
 
                 entity.HasIndex(e => new { e.Id, e.Uuid })
-                    .HasName("id");
+                    .HasName("vehicle_index");
 
                 entity.Property(e => e.Id)
                     .HasColumnName("id")
                     .HasColumnType("unsigned bigint(20)");
+
+                entity.HasKey(e => e.Id);
 
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
@@ -348,13 +343,12 @@ namespace Car_Rental_System_API
 
                 entity.Property(e => e.Year)
                     .HasColumnName("year")
-                    .HasColumnType("unsigned int(4) zerofill")
+                    .HasColumnType("unsigned int(4)")
                     .HasDefaultValueSql("'0001'");
             });
 
-            OnModelCreatingPartial(modelBuilder);
+            return modelBuilder;
+            // return modelBuilder.FinalizeModel();
         }
-
-        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
