@@ -9,6 +9,9 @@ using Car_Rental_System_API;
 
 namespace Car_Rental_System_API.Controllers
 {
+    /// <summary>
+    /// Handles requests that point to /api/vehicles
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class VehiclesController : ControllerBase
@@ -22,10 +25,10 @@ namespace Car_Rental_System_API.Controllers
 
         // GET: api/Vehicles
         [HttpGet]
-        public async Task<IEnumerable<Vehicle>> GetVehicles()
+        public async Task<ActionResult<IEnumerable<Vehicle>>> GetVehicles()
         {
             var mappedVehicles = await MapPropertiesToVehicles();
-            return mappedVehicles;
+            return Ok(mappedVehicles);
         }
 
         // GET: api/Vehicles/5
