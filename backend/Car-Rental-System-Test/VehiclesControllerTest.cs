@@ -8,12 +8,7 @@ using Car_Rental_System_Test.Seed;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
-using System.Diagnostics;
 using Xunit.Abstractions;
-using Microsoft.Extensions.Options;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using Car_Rental_System_Test.Config;
-using Xunit.Extensions;
 using System.Globalization;
 
 /**

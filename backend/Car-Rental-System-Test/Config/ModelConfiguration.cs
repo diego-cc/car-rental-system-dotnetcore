@@ -1,10 +1,6 @@
 ﻿using Car_Rental_System_API;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Car_Rental_System_Test.Config
 {

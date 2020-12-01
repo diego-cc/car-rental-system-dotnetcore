@@ -1,16 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Pomelo.EntityFrameworkCore.MySql.Storage;
 
@@ -33,7 +27,7 @@ namespace Car_Rental_System_API
             options
             .UseMySql(Configuration.GetConnectionString("NMTFleetManager"), mySqlOptions =>
             mySqlOptions
-            .ServerVersion(new ServerVersion(new Version(5, 7, 24), ServerType.MySql))
+            .ServerVersion(new ServerVersion(new Version(10, 5, 8), ServerType.MariaDb))
             ));
         }
 

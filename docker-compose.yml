@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  app:
+    image: crs-frontend
+    container_name: crs-frontend
+    restart: always
+    working_dir: /app
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    build:
+      context: ./frontend/car-rental-system
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend/car-rental-system:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+    networks:
+      crs:
+        ipv4_address: 24.24.24.1
+
+networks:
+  crs:
+    name: crs
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 24.24.24.24/16

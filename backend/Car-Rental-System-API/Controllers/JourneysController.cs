@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Car_Rental_System_API;
 
 namespace Car_Rental_System_API.Controllers
 {
@@ -31,7 +29,7 @@ namespace Car_Rental_System_API.Controllers
             IEnumerable<Journey> mappedJourneys = journeys.Select(j =>
             {
                 // map corresponding vehicle to this journey
-                var correspondingVehicle = vehicles.Find(v => 
+                var correspondingVehicle = vehicles.Find(v =>
                 (v.Id == j.VehicleId) && (v.Uuid == j.VehicleUuid));
                 j.Vehicle = correspondingVehicle;
 

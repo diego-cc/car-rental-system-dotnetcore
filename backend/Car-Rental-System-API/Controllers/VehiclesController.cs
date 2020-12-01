@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Car_Rental_System_API;
 
 namespace Car_Rental_System_API.Controllers
 {
@@ -99,7 +97,7 @@ namespace Car_Rental_System_API.Controllers
 
         // PUT: /api/Vehicles/65680537-130d-4469-83cb-5c407721f736
         [HttpPut("{uuid:guid}")]
-        public async Task<IActionResult> PutVehicle(Guid uuid, [FromBody]Vehicle vehicle)
+        public async Task<IActionResult> PutVehicle(Guid uuid, [FromBody] Vehicle vehicle)
         {
             var vehicleToBeModified = await _context.Vehicles.SingleOrDefaultAsync(v => v.Uuid == uuid);
 
