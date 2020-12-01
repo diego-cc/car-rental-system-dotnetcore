@@ -1,6 +1,7 @@
 /**
  * FuelPurchase.js
  */
+import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 
 /**
@@ -28,7 +29,15 @@ export class FuelPurchase {
    * @param {string} createdAt - timestamp generated when this fuel purchase is created
    * @param {string|null} updatedAt - timestamp generated when this fuel purchase is updated
    */
-  constructor(bookingUuid, vehicleUuid, fuelQuantity, fuelPrice, uuid = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
+  constructor(
+    bookingUuid,
+    vehicleUuid,
+    fuelQuantity,
+    fuelPrice,
+    uuid = uuidv4(),
+    createdAt = moment().format("DD/MM/YYYY hh:mm:ss A"),
+    updatedAt = null
+  ) {
     this._uuid = uuid;
     this._bookingUuid = bookingUuid;
     this._vehicleUuid = vehicleUuid;
@@ -54,13 +63,12 @@ export class FuelPurchase {
     this._bookingUuid = value;
   }
 
-
   get vehicleUuid() {
-	return this._vehicleUuid;
+    return this._vehicleUuid;
   }
 
   set vehicleUuid(value) {
-	this._vehicleUuid = value;
+    this._vehicleUuid = value;
   }
 
   get fuelQuantity() {

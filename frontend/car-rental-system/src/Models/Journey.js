@@ -1,6 +1,7 @@
 /**
  * Journey.js
  */
+import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 
 /**
@@ -36,106 +37,117 @@ export class Journey {
    * @param {string} createdAt - timestamp generated when this journey is created
    * @param {string|null} updatedAt - timestamp generated when this journey is updated
    */
-  constructor(bookingUuid, vehicleUuid, startOdometer, endOdometer, startedAt, endedAt, journeyFrom, journeyTo, uuid = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
-	this._uuid = uuid;
-	this._bookingUuid = bookingUuid;
-	this._vehicleUuid = vehicleUuid;
-	this._startOdometer = startOdometer;
-	this._endOdometer = endOdometer;
-	this._startedAt = startedAt;
-	this._endedAt = endedAt;
-	this._journeyFrom = journeyFrom;
-	this._journeyTo = journeyTo;
-	this._createdAt = createdAt;
-	this._updatedAt = updatedAt;
+  constructor(
+    bookingUuid,
+    vehicleUuid,
+    startOdometer,
+    endOdometer,
+    startedAt,
+    endedAt,
+    journeyFrom,
+    journeyTo,
+    uuid = uuidv4(),
+    createdAt = moment().format("DD/MM/YYYY hh:mm:ss A"),
+    updatedAt = null
+  ) {
+    this._uuid = uuid;
+    this._bookingUuid = bookingUuid;
+    this._vehicleUuid = vehicleUuid;
+    this._startOdometer = startOdometer;
+    this._endOdometer = endOdometer;
+    this._startedAt = startedAt;
+    this._endedAt = endedAt;
+    this._journeyFrom = journeyFrom;
+    this._journeyTo = journeyTo;
+    this._createdAt = createdAt;
+    this._updatedAt = updatedAt;
   }
 
   get uuid() {
-	return this._uuid;
+    return this._uuid;
   }
 
   set uuid(value) {
-	this._uuid = value;
+    this._uuid = value;
   }
 
   get bookingUuid() {
-	return this._bookingUuid;
+    return this._bookingUuid;
   }
 
   set bookingUuid(value) {
-	this._bookingUuid = value;
+    this._bookingUuid = value;
   }
 
-
   get vehicleUuid() {
-	return this._vehicleUuid;
+    return this._vehicleUuid;
   }
 
   set vehicleUuid(value) {
-	this._vehicleUuid = value;
+    this._vehicleUuid = value;
   }
 
   get startOdometer() {
-	return this._startOdometer;
+    return this._startOdometer;
   }
 
   set startOdometer(value) {
-	this._startOdometer = value;
+    this._startOdometer = value;
   }
 
   get endOdometer() {
-	return this._endOdometer;
+    return this._endOdometer;
   }
 
   set endOdometer(value) {
-	this._endOdometer = value;
+    this._endOdometer = value;
   }
 
   get startedAt() {
-	return this._startedAt;
+    return this._startedAt;
   }
 
   set startedAt(value) {
-	this._startedAt = value;
+    this._startedAt = value;
   }
 
   get endedAt() {
-	return this._endedAt;
+    return this._endedAt;
   }
 
   set endedAt(value) {
-	this._endedAt = value;
+    this._endedAt = value;
   }
 
   get journeyFrom() {
-	return this._journeyFrom;
+    return this._journeyFrom;
   }
 
   set journeyFrom(value) {
-	this._journeyFrom = value;
+    this._journeyFrom = value;
   }
 
   get journeyTo() {
-	return this._journeyTo;
+    return this._journeyTo;
   }
 
   set journeyTo(value) {
-	this._journeyTo = value;
+    this._journeyTo = value;
   }
 
   get createdAt() {
-	return this._createdAt;
+    return this._createdAt;
   }
 
   set createdAt(value) {
-	this._createdAt = value;
+    this._createdAt = value;
   }
 
   get updatedAt() {
-	return this._updatedAt;
+    return this._updatedAt;
   }
 
   set updatedAt(value) {
-	this._updatedAt = value;
+    this._updatedAt = value;
   }
 }

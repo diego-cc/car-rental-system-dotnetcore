@@ -1,6 +1,7 @@
 /**
  * Booking.js
  */
+import { v4 as uuidv4 } from "uuid";
 import moment from "moment";
 
 /**
@@ -35,116 +36,127 @@ export class Booking {
    * @param {string} createdAt - timestamp generated when this booking is created
    * @param {string|null} updatedAt - timestamp generated when this booking is updated
    */
-  constructor(vehicleUuid, type, startedAt, endedAt, startOdometer, endOdometer = null, journeys = [], fuelPurchases = [], uuid = require('uuid/v4')(), createdAt = moment().format('DD/MM/YYYY hh:mm:ss A'), updatedAt = null) {
-	this._uuid = uuid;
-	this._vehicleUuid = vehicleUuid;
-	this._type = type;
-	this._startedAt = startedAt;
-	this._endedAt = endedAt;
-	this._startOdometer = startOdometer;
-	this._endOdometer = endOdometer;
-	this._journeys = journeys;
-	this._fuelPurchases = fuelPurchases;
-	this._createdAt = createdAt;
-	this._updatedAt = updatedAt;
-	this._cost = this.calculateBookingCost();
+  constructor(
+    vehicleUuid,
+    type,
+    startedAt,
+    endedAt,
+    startOdometer,
+    endOdometer = null,
+    journeys = [],
+    fuelPurchases = [],
+    uuid = uuidv4(),
+    createdAt = moment().format("DD/MM/YYYY hh:mm:ss A"),
+    updatedAt = null
+  ) {
+    this._uuid = uuid;
+    this._vehicleUuid = vehicleUuid;
+    this._type = type;
+    this._startedAt = startedAt;
+    this._endedAt = endedAt;
+    this._startOdometer = startOdometer;
+    this._endOdometer = endOdometer;
+    this._journeys = journeys;
+    this._fuelPurchases = fuelPurchases;
+    this._createdAt = createdAt;
+    this._updatedAt = updatedAt;
+    this._cost = this.calculateBookingCost();
   }
 
   get uuid() {
-	return this._uuid;
+    return this._uuid;
   }
 
   set uuid(value) {
-	this._uuid = value;
+    this._uuid = value;
   }
 
   get vehicleUuid() {
-	return this._vehicleUuid;
+    return this._vehicleUuid;
   }
 
   set vehicleUuid(value) {
-	this._vehicleUuid = value;
+    this._vehicleUuid = value;
   }
 
   get type() {
-	return this._type;
+    return this._type;
   }
 
   set type(value) {
-	this._type = value;
+    this._type = value;
   }
 
   get startedAt() {
-	return this._startedAt;
+    return this._startedAt;
   }
 
   set startedAt(value) {
-	this._startedAt = value;
+    this._startedAt = value;
   }
 
   get endedAt() {
-	return this._endedAt;
+    return this._endedAt;
   }
 
   set endedAt(value) {
-	this._endedAt = value;
+    this._endedAt = value;
   }
 
   get startOdometer() {
-	return this._startOdometer;
+    return this._startOdometer;
   }
 
   set startOdometer(value) {
-	this._startOdometer = value;
+    this._startOdometer = value;
   }
 
   get endOdometer() {
-	return this._endOdometer;
+    return this._endOdometer;
   }
 
   set endOdometer(value) {
-	this._endOdometer = value;
+    this._endOdometer = value;
   }
 
   get createdAt() {
-	return this._createdAt;
+    return this._createdAt;
   }
 
   set createdAt(value) {
-	this._createdAt = value;
+    this._createdAt = value;
   }
 
   get updatedAt() {
-	return this._updatedAt;
+    return this._updatedAt;
   }
 
   set updatedAt(value) {
-	this._updatedAt = value;
+    this._updatedAt = value;
   }
 
   get journeys() {
-	return this._journeys;
+    return this._journeys;
   }
 
   set journeys(value) {
-	this._journeys = value;
+    this._journeys = value;
   }
 
   get cost() {
-	return this._cost;
+    return this._cost;
   }
 
   set cost(value) {
-	this._cost = value;
+    this._cost = value;
   }
 
-
   get fuelPurchases() {
-	return this._fuelPurchases;
+    return this._fuelPurchases;
   }
 
   set fuelPurchases(newFuelPurchases) {
-	this._fuelPurchases = newFuelPurchases;
+    this._fuelPurchases = newFuelPurchases;
   }
 
   /**
@@ -155,17 +167,17 @@ export class Booking {
    * has been updated on firebase
    */
   updateEndOdometer(callback = undefined, updateRemote = true) {
-	if (this.journeys.length) {
-	  let lastJourney = this.journeys[0];
-	  this.journeys.forEach((j, i) => {
-		if (j.endedAt > lastJourney.endedAt) {
-		  lastJourney = this.journeys[i];
-		}
-	  });
-	  this.endOdometer = lastJourney.endOdometer;
-	} else {
-	  this.endOdometer = null;
-	}
+    if (this.journeys.length) {
+      let lastJourney = this.journeys[0];
+      this.journeys.forEach((j, i) => {
+        if (j.endedAt > lastJourney.endedAt) {
+          lastJourney = this.journeys[i];
+        }
+      });
+      this.endOdometer = lastJourney.endOdometer;
+    } else {
+      this.endOdometer = null;
+    }
   }
 
   /**
@@ -173,7 +185,7 @@ export class Booking {
    * @param {FuelPurchase} newFuelPurchase - new fuel purchase to be added to this.fuelPurchases
    */
   addFuelPurchase(newFuelPurchase) {
-	this.fuelPurchases.push(newFuelPurchase);
+    this.fuelPurchases.push(newFuelPurchase);
   }
 
   /**
@@ -181,9 +193,9 @@ export class Booking {
    * @param {Journey} newJourney - new journey to be added to this.journeys
    */
   addJourney(newJourney) {
-	this.journeys.push(newJourney);
-	this.updateEndOdometer(null, false);
-	this.cost = this.calculateBookingCost();
+    this.journeys.push(newJourney);
+    this.updateEndOdometer(null, false);
+    this.cost = this.calculateBookingCost();
   }
 
   /**
@@ -191,9 +203,9 @@ export class Booking {
    * @param {Journey} journey - the journey to be removed
    */
   removeJourney(journey) {
-	this.journeys = this.journeys.filter(j => j.uuid !== journey.uuid);
-	this.updateEndOdometer(null, false);
-	this.cost = this.calculateBookingCost();
+    this.journeys = this.journeys.filter((j) => j.uuid !== journey.uuid);
+    this.updateEndOdometer(null, false);
+    this.cost = this.calculateBookingCost();
   }
 
   /**
@@ -201,7 +213,9 @@ export class Booking {
    * @param {FuelPurchase} fuelPurchase - the fuel purchase to be removed
    */
   removeFuelPurchase(fuelPurchase) {
-	this.fuelPurchases = this.fuelPurchases.filter(f => f.uuid !== fuelPurchase.uuid);
+    this.fuelPurchases = this.fuelPurchases.filter(
+      (f) => f.uuid !== fuelPurchase.uuid
+    );
   }
 
   /**
@@ -209,16 +223,16 @@ export class Booking {
    * @returns {number} bookingCost - the cost of this booking
    */
   calculateBookingCost() {
-	let cost = 0;
-	if (this.type === 'D') {
-	  let days = moment(this.endedAt).diff(this.startedAt, 'days');
-	  if (days === 0) days = 1;
-	  cost = days * 100;
-	} else {
-	  if (this.endOdometer) {
-		cost = (this.endOdometer - this.startOdometer);
-	  }
-	}
-	return cost;
+    let cost = 0;
+    if (this.type === "D") {
+      let days = moment(this.endedAt).diff(this.startedAt, "days");
+      if (days === 0) days = 1;
+      cost = days * 100;
+    } else {
+      if (this.endOdometer) {
+        cost = this.endOdometer - this.startOdometer;
+      }
+    }
+    return cost;
   }
 }
