@@ -3,10 +3,10 @@ FROM node:alpine
 WORKDIR /app
 ENV PATH /app/node_modules/.bin:$PATH
 
-COPY package*.json ./
+COPY ./car-rental-system/package*.json ./
 
 RUN npm i && npm i -g react-scripts
 
-COPY . ./
+COPY ./car-rental-system ./
 
 CMD ["npm", "start"]
