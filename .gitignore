@@ -441,3 +441,15 @@ sketch
 # End of https://www.gitignore.io/api/react,aspnetcore,jetbrains+all,openframeworks+visualstudio
 
 __snapshots__/
+
+# Secrets
+.env
+
+# API production settings
+appsettings.Production.json
+
+# Production images to be built
+Dockerfile.prod
+
+# Production DB sql
+DCC-FleetManager.prod.sql

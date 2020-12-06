@@ -1,0 +1,43 @@
+version: "3.8"
+
+networks:
+  glue:
+    name: glue
+    ipam:
+      driver: default
+      config:
+        - subnet: "22.22.22.0/24"
+
+services:
+  db:
+    container_name: db
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Fleet2019S2
+      MYSQL_DATABASE: nmt_fleet_manager
+      MYSQL_USER: nmt_fleet_manager
+      MYSQL_PASSWORD: Fleet2019S2
+    volumes:
+      # - ./db/config:/etc/mysql/conf.d
+      - ./db/init:/docker-entrypoint-initdb.d
+    networks:
+      - glue
+
+  api:
+    container_name: api
+    working_dir: /app
+    restart: on-failure
+    build:
+      context: ./Car-Rental-System-API
+      dockerfile: Dockerfile
+    volumes:
+      - ./Car-Rental-System-API:/app
+    networks:
+      - glue
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    depends_on:
+      - db    
+      

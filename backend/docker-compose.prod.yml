@@ -1,0 +1,31 @@
+version: "3.8"
+
+networks:
+  glue_prod:
+    name: glue_prod
+
+# DB secrets will be read from .env
+services:
+  db:
+    container_name: db
+    image: diegocc/crs-db-prod
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      - glue_prod
+
+  api:
+    container_name: api
+    image: diegocc/crs-api-prod
+    restart: always
+    networks:
+      - glue_prod
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db    
+      
