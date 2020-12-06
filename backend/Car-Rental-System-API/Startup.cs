@@ -12,6 +12,7 @@ namespace Car_Rental_System_API
 {
     public class Startup
     {
+        readonly string AllowedOrigins = "_allowedOrigins";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -22,6 +23,15 @@ namespace Car_Rental_System_API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: AllowedOrigins,
+                builder =>
+                {
+                    builder.WithOrigins("https://crs.diegocc.com");
+                });
+            });
+
             services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddDbContext<NMTFleetManagerContext>(options =>
             options
@@ -42,6 +52,8 @@ namespace Car_Rental_System_API
             // app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(AllowedOrigins);
 
             app.UseAuthorization();
 
