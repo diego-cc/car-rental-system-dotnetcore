@@ -8,7 +8,7 @@ namespace Car_Rental_System_API
 {
     public partial class FuelPurchase : IEquatable<FuelPurchase>
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Key]
         [Required]
         public ulong Id { get; set; }
         public Guid Uuid { get; set; }

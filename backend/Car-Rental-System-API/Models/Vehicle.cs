@@ -17,7 +17,7 @@ namespace Car_Rental_System_API
             Services = new HashSet<Service>();
         }
 
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [Key]
         [Required]
         public ulong Id { get; set; }
         [Required]
