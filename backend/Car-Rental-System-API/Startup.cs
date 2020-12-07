@@ -28,7 +28,9 @@ namespace Car_Rental_System_API
                 options.AddPolicy(name: AllowedOrigins,
                 builder =>
                 {
-                    builder.WithOrigins("https://crs.diegocc.com");
+                    builder.WithOrigins("https://crs.diegocc.com")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
                 });
             });
 
